@@ -1,0 +1,1045 @@
+
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Aug  4 09:22:12 2017
+
+@author: TALABI
+"""
+858
+#B16Z CumError and EDL Calculation--THE BOMB!
+
+import pandas as pand
+import os
+import warnings
+warnings.filterwarnings('ignore')
+Kenny =pand.read_csv('C:\\Users\\TALABI\\Desktop\\R_MachineLearning\\8697061_WID06.csv',sep=r',', skipinitialspace=True )
+Kenny
+Kenny.columns
+list(Kenny.columns)
+
+list2= list(Kenny.columns)
+list3 = []
+for str in list2:
+    list3.append(str.strip(" "))
+Kenny.columns = list3
+
+
+list4 = ['lotid', 'rundate','parttype','layer','recipe', 'waferid','slotno', 'target', 'edges', 'SemField-X', 'SemField-Y', 'ScanDie-X',\
+            'ScanDie-Y','SemDie-X', 'SemDie-Y', 'Radius(mm)', 'BotCD', 'CogLocxy-X', 'CogLocxy-Y', 'CogXIntermediate', 'ROIID', 'ROITypeID']
+
+Kenny_True = Kenny[list4]
+#Renaming the Radius to ensure conformality to Python naming schema
+Kenny_True.rename(columns={'Radius(mm)': 'Radius'}, inplace = True)
+
+#This section is to remove the "-" from all the column labels
+list70 = list(Kenny_True.columns)
+list71 = []
+for str in list70:
+    list71.append(str.replace("-", ""))
+Kenny_True.columns = list71
+
+#Assigning Region Values based on the Radius of the die X,Y locations - This is from David -Thank You!
+Kenny_True['Region'] = None
+for zz in range(len(Kenny_True)):
+    if Kenny_True.Radius[zz] < 67.08:
+        Kenny_True.Region[zz] = 'A'
+    elif ((Kenny_True.Radius[zz] > 67.08 ) & (Kenny_True.Radius[zz] < 94.87)):
+        Kenny_True.Region[zz] = 'B'
+    elif ((Kenny_True.Radius[zz] > 94.87 ) & (Kenny_True.Radius[zz] < 116.19)):
+        Kenny_True.Region[zz] = 'C'
+    elif ((Kenny_True.Radius[zz] > 116.19 ) & (Kenny_True.Radius[zz] < 134.16)):
+        Kenny_True.Region[zz] = 'D'
+    elif (Kenny_True.Radius[zz] > 134.16):
+        Kenny_True.Region[zz] = 'E'
+
+
+#Getting the Zones and then the CogXIntermediate Values 
+Stair_0Test = Kenny_True[(Kenny_True.target == "B16Z_58ACI_1PB_BSCSGS")]
+Stair_0Test = Stair_0Test.reset_index(drop=True)
+
+#Selecting the 1,1 Edge
+Stair_0Test1 = Stair_0Test[(Stair_0Test.edges == "1,1")]
+Stair_0Test1 = Stair_0Test1.reset_index(drop=True)
+
+#Adding the Zone Values based on the ROIID and ROIID Types
+Stair_0Test1["Zones"] = None
+for ii in range(len(Stair_0Test1)):
+    if ((Stair_0Test1.ROITypeID[ii] == 2) & (Stair_0Test1.ROIID[ii] ==1)):
+        Stair_0Test1.Zones[ii] = "Zone8"
+    elif ((Stair_0Test1.ROITypeID[ii] == 2) & (Stair_0Test1.ROIID[ii] ==2)):
+        Stair_0Test1.Zones[ii] = "Zone7"
+    elif ((Stair_0Test1.ROITypeID[ii] == 2) & (Stair_0Test1.ROIID[ii] ==3)):
+        Stair_0Test1.Zones[ii] = "Zone6"
+    elif ((Stair_0Test1.ROITypeID[ii] == 2) & (Stair_0Test1.ROIID[ii] ==4)):
+        Stair_0Test1.Zones[ii] = "Zone5"
+    elif ((Stair_0Test1.ROITypeID[ii] == 2) & (Stair_0Test1.ROIID[ii] ==5)):
+        Stair_0Test1.Zones[ii] = "Zone4"
+    elif ((Stair_0Test1.ROITypeID[ii] == 2) & (Stair_0Test1.ROIID[ii] ==6)):
+        Stair_0Test1.Zones[ii] = "Zone3"
+    elif ((Stair_0Test1.ROITypeID[ii] == 2) & (Stair_0Test1.ROIID[ii] ==7)):
+        Stair_0Test1.Zones[ii] = "Zone2"
+    elif ((Stair_0Test1.ROITypeID[ii] == 2) & (Stair_0Test1.ROIID[ii] ==8)):
+        Stair_0Test1.Zones[ii] = "Zone1"
+    else: 
+        Stair_0Test1.Zones[ii] = "No_Zone"
+
+
+#Adding the values for the measurements to SGS for calculating the WRT SGS lengths
+Stair_0Test2 = Stair_0Test[(Stair_0Test.edges == "1,2")]
+Stair_0Test2 = Stair_0Test2.reset_index(drop=True)
+
+#Adding the SGS Values for measurement calculations
+Stair_0Test1["SGS_Measurements"] = None
+for jj in range(len(Stair_0Test1)):
+    for kk in range(len(Stair_0Test2)):
+        if ((Stair_0Test1.SemDieX[jj] == Stair_0Test2.SemDieX[kk]) & (Stair_0Test1.SemDieY[jj] == Stair_0Test2.SemDieY[kk])):
+            Stair_0Test1.SGS_Measurements[jj] = Stair_0Test2.CogLocxyY[kk]
+
+
+
+
+#Adding each individual edge
+
+#Adding Edge 1 to the measurements
+Stair_0Test3 = Kenny_True[(Kenny_True.target == "B16Z_58ACI_1PB_BSCV2")]
+Stair_0Test3 = Stair_0Test3.reset_index(drop=True)
+
+#Selecting the 2,3 Edge
+Stair_0Test3 = Stair_0Test3[(Stair_0Test3.edges == "2,3")]
+Stair_0Test3 = Stair_0Test3.reset_index(drop=True)
+#Matching to Zones
+Stair_0Test3["Zones"] = None
+for ii in range(len(Stair_0Test3)):
+    if (Stair_0Test3.ROIID[ii] ==1):
+        Stair_0Test3.Zones[ii] = "Zone1"
+    elif (Stair_0Test3.ROIID[ii] ==2):
+        Stair_0Test3.Zones[ii] = "Zone2"
+    elif (Stair_0Test3.ROIID[ii] ==3):
+        Stair_0Test3.Zones[ii] = "Zone3"
+    elif (Stair_0Test3.ROIID[ii] ==4):
+        Stair_0Test3.Zones[ii] = "Zone4"
+    elif (Stair_0Test3.ROIID[ii] ==5):
+        Stair_0Test3.Zones[ii] = "Zone5"
+    elif (Stair_0Test3.ROIID[ii] ==6):
+        Stair_0Test3.Zones[ii] = "Zone6"
+    elif (Stair_0Test3.ROIID[ii] ==7):
+        Stair_0Test3.Zones[ii] = "Zone7"
+    elif (Stair_0Test3.ROIID[ii] ==8):
+        Stair_0Test3.Zones[ii] = "Zone8"
+#Appending the Bottom CDs to the Master File for Cum Error Calculations
+Stair_0Test1["Edge_1"] = None
+for jj in range(len(Stair_0Test1)):
+    for kk in range(len(Stair_0Test3)):
+        if ((Stair_0Test1.SemDieX[jj] == Stair_0Test3.SemDieX[kk]) & (Stair_0Test1.SemDieY[jj] == Stair_0Test3.SemDieY[kk]) & (Stair_0Test1.Zones[jj] == Stair_0Test3.Zones[kk]) ):
+            Stair_0Test1.Edge_1[jj] = Stair_0Test3.BotCD[kk]
+        
+        
+        
+
+
+
+#Adding Edge 2 to the measurements      
+Stair_0Test4 = Kenny_True[(Kenny_True.target == "B16Z_58ACI_1PB_BSCV2")]
+Stair_0Test4 = Stair_0Test4.reset_index(drop=True)
+
+#Selecting the 3,4 Edge
+Stair_0Test4 = Stair_0Test4[(Stair_0Test4.edges == "3,4")]
+Stair_0Test4 = Stair_0Test4.reset_index(drop=True)
+#Matching to Zones
+Stair_0Test4["Zones"] = None
+for ii in range(len(Stair_0Test4)):
+    if (Stair_0Test4.ROIID[ii] ==1):
+        Stair_0Test4.Zones[ii] = "Zone1"
+    elif (Stair_0Test4.ROIID[ii] ==2):
+        Stair_0Test4.Zones[ii] = "Zone2"
+    elif (Stair_0Test4.ROIID[ii] ==3):
+        Stair_0Test4.Zones[ii] = "Zone3"
+    elif (Stair_0Test4.ROIID[ii] ==4):
+        Stair_0Test4.Zones[ii] = "Zone4"
+    elif (Stair_0Test4.ROIID[ii] ==5):
+        Stair_0Test4.Zones[ii] = "Zone5"
+    elif (Stair_0Test4.ROIID[ii] ==6):
+        Stair_0Test4.Zones[ii] = "Zone6"
+    elif (Stair_0Test4.ROIID[ii] ==7):
+        Stair_0Test4.Zones[ii] = "Zone7"
+    elif (Stair_0Test4.ROIID[ii] ==8):
+        Stair_0Test4.Zones[ii] = "Zone8"
+#Appending the Bottom CDs to the Master File for Cum Error Calculations
+Stair_0Test1["Edge_2"] = None
+for jj in range(len(Stair_0Test1)):
+    for kk in range(len(Stair_0Test4)):
+        if ((Stair_0Test1.SemDieX[jj] == Stair_0Test4.SemDieX[kk]) & (Stair_0Test1.SemDieY[jj] == Stair_0Test4.SemDieY[kk]) & (Stair_0Test1.Zones[jj] == Stair_0Test4.Zones[kk]) ):
+            Stair_0Test1.Edge_2[jj] = Stair_0Test4.BotCD[kk]   
+            
+
+            
+#Adding Edge 3 to the measurements      
+Stair_0Test5 = Kenny_True[(Kenny_True.target == "B16Z_58ACI_1PB_BSCV2")]
+Stair_0Test5 = Stair_0Test5.reset_index(drop=True)
+
+#Selecting the 4,5 Edge
+Stair_0Test5 = Stair_0Test5[(Stair_0Test5.edges == "4,5")]
+Stair_0Test5 = Stair_0Test5.reset_index(drop=True)
+#Matching to Zones
+Stair_0Test5["Zones"] = None
+for ii in range(len(Stair_0Test5)):
+    if (Stair_0Test5.ROIID[ii] ==1):
+        Stair_0Test5.Zones[ii] = "Zone1"
+    elif (Stair_0Test5.ROIID[ii] ==2):
+        Stair_0Test5.Zones[ii] = "Zone2"
+    elif (Stair_0Test5.ROIID[ii] ==3):
+        Stair_0Test5.Zones[ii] = "Zone3"
+    elif (Stair_0Test5.ROIID[ii] ==4):
+        Stair_0Test5.Zones[ii] = "Zone4"
+    elif (Stair_0Test5.ROIID[ii] ==5):
+        Stair_0Test5.Zones[ii] = "Zone5"
+    elif (Stair_0Test5.ROIID[ii] ==6):
+        Stair_0Test5.Zones[ii] = "Zone6"
+    elif (Stair_0Test5.ROIID[ii] ==7):
+        Stair_0Test5.Zones[ii] = "Zone7"
+    elif (Stair_0Test5.ROIID[ii] ==8):
+        Stair_0Test5.Zones[ii] = "Zone8"
+#Appending the Bottom CDs to the Master File for Cum Error Calculations
+Stair_0Test1["Edge_3"] = None
+for jj in range(len(Stair_0Test1)):
+    for kk in range(len(Stair_0Test5)):
+        if ((Stair_0Test1.SemDieX[jj] == Stair_0Test5.SemDieX[kk]) & (Stair_0Test1.SemDieY[jj] == Stair_0Test5.SemDieY[kk]) & (Stair_0Test1.Zones[jj] == Stair_0Test5.Zones[kk]) ):
+            Stair_0Test1.Edge_3[jj] = Stair_0Test5.BotCD[kk]   
+            
+            
+            
+#Adding Edge 4 to the measurements      
+Stair_0Test6 = Kenny_True[(Kenny_True.target == "B16Z_58ACI_1PB_BSCV2")]
+Stair_0Test6 = Stair_0Test6.reset_index(drop=True)
+
+#Selecting the 5,6 Edge
+Stair_0Test6 = Stair_0Test6[(Stair_0Test6.edges == "5,6")]
+Stair_0Test6 = Stair_0Test6.reset_index(drop=True)
+#Matching to Zones
+Stair_0Test6["Zones"] = None
+for ii in range(len(Stair_0Test6)):
+    if (Stair_0Test6.ROIID[ii] ==1):
+        Stair_0Test6.Zones[ii] = "Zone1"
+    elif (Stair_0Test6.ROIID[ii] ==2):
+        Stair_0Test6.Zones[ii] = "Zone2"
+    elif (Stair_0Test6.ROIID[ii] ==3):
+        Stair_0Test6.Zones[ii] = "Zone3"
+    elif (Stair_0Test6.ROIID[ii] ==4):
+        Stair_0Test6.Zones[ii] = "Zone4"
+    elif (Stair_0Test6.ROIID[ii] ==5):
+        Stair_0Test6.Zones[ii] = "Zone5"
+    elif (Stair_0Test6.ROIID[ii] ==6):
+        Stair_0Test6.Zones[ii] = "Zone6"
+    elif (Stair_0Test6.ROIID[ii] ==7):
+        Stair_0Test6.Zones[ii] = "Zone7"
+    elif (Stair_0Test6.ROIID[ii] ==8):
+        Stair_0Test6.Zones[ii] = "Zone8"
+#Appending the Bottom CDs to the Master File for Cum Error Calculations
+Stair_0Test1["Edge_4"] = None
+for jj in range(len(Stair_0Test1)):
+    for kk in range(len(Stair_0Test6)):
+        if ((Stair_0Test1.SemDieX[jj] == Stair_0Test6.SemDieX[kk]) & (Stair_0Test1.SemDieY[jj] == Stair_0Test6.SemDieY[kk]) & (Stair_0Test1.Zones[jj] == Stair_0Test6.Zones[kk]) ):
+            Stair_0Test1.Edge_4[jj] = Stair_0Test6.BotCD[kk]   
+            
+
+
+
+#Adding Edge 5 to the measurements      
+Stair_0Test7 = Kenny_True[(Kenny_True.target == "B16Z_58ACI_1PB_BSCV2")]
+Stair_0Test7 = Stair_0Test7.reset_index(drop=True)
+
+#Selecting the 6,7 Edge
+Stair_0Test7 = Stair_0Test7[(Stair_0Test7.edges == "6,7")]
+Stair_0Test7 = Stair_0Test7.reset_index(drop=True)
+#Matching to Zones
+Stair_0Test7["Zones"] = None
+for ii in range(len(Stair_0Test7)):
+    if (Stair_0Test7.ROIID[ii] ==1):
+        Stair_0Test7.Zones[ii] = "Zone1"
+    elif (Stair_0Test7.ROIID[ii] ==2):
+        Stair_0Test7.Zones[ii] = "Zone2"
+    elif (Stair_0Test7.ROIID[ii] ==3):
+        Stair_0Test7.Zones[ii] = "Zone3"
+    elif (Stair_0Test7.ROIID[ii] ==4):
+        Stair_0Test7.Zones[ii] = "Zone4"
+    elif (Stair_0Test7.ROIID[ii] ==5):
+        Stair_0Test7.Zones[ii] = "Zone5"
+    elif (Stair_0Test7.ROIID[ii] ==6):
+        Stair_0Test7.Zones[ii] = "Zone6"
+    elif (Stair_0Test7.ROIID[ii] ==7):
+        Stair_0Test7.Zones[ii] = "Zone7"
+    elif (Stair_0Test7.ROIID[ii] ==8):
+        Stair_0Test7.Zones[ii] = "Zone8"
+#Appending the Bottom CDs to the Master File for Cum Error Calculations
+Stair_0Test1["Edge_5"] = None
+for jj in range(len(Stair_0Test1)):
+    for kk in range(len(Stair_0Test7)):
+        if ((Stair_0Test1.SemDieX[jj] == Stair_0Test7.SemDieX[kk]) & (Stair_0Test1.SemDieY[jj] == Stair_0Test7.SemDieY[kk]) & (Stair_0Test1.Zones[jj] == Stair_0Test7.Zones[kk]) ):
+            Stair_0Test1.Edge_5[jj] = Stair_0Test7.BotCD[kk]   
+
+
+
+
+
+#Adding Edge 6 to the measurements      
+Stair_0Test8 = Kenny_True[(Kenny_True.target == "B16Z_58ACI_1PB_BSCV2")]
+Stair_0Test8 = Stair_0Test8.reset_index(drop=True)
+
+#Selecting the 7,8 Edge
+Stair_0Test8 = Stair_0Test8[(Stair_0Test8.edges == "7,8")]
+Stair_0Test8 = Stair_0Test8.reset_index(drop=True)
+#Matching to Zones
+Stair_0Test8["Zones"] = None
+for ii in range(len(Stair_0Test8)):
+    if (Stair_0Test8.ROIID[ii] ==1):
+        Stair_0Test8.Zones[ii] = "Zone1"
+    elif (Stair_0Test8.ROIID[ii] ==2):
+        Stair_0Test8.Zones[ii] = "Zone2"
+    elif (Stair_0Test8.ROIID[ii] ==3):
+        Stair_0Test8.Zones[ii] = "Zone3"
+    elif (Stair_0Test8.ROIID[ii] ==4):
+        Stair_0Test8.Zones[ii] = "Zone4"
+    elif (Stair_0Test8.ROIID[ii] ==5):
+        Stair_0Test8.Zones[ii] = "Zone5"
+    elif (Stair_0Test8.ROIID[ii] ==6):
+        Stair_0Test8.Zones[ii] = "Zone6"
+    elif (Stair_0Test8.ROIID[ii] ==7):
+        Stair_0Test8.Zones[ii] = "Zone7"
+    elif (Stair_0Test8.ROIID[ii] ==8):
+        Stair_0Test8.Zones[ii] = "Zone8"
+#Appending the Bottom CDs to the Master File for Cum Error Calculations
+Stair_0Test1["Edge_6"] = None
+for jj in range(len(Stair_0Test1)):
+    for kk in range(len(Stair_0Test8)):
+        if ((Stair_0Test1.SemDieX[jj] == Stair_0Test8.SemDieX[kk]) & (Stair_0Test1.SemDieY[jj] == Stair_0Test8.SemDieY[kk]) & (Stair_0Test1.Zones[jj] == Stair_0Test8.Zones[kk]) ):
+            Stair_0Test1.Edge_6[jj] = Stair_0Test8.BotCD[kk]   
+
+
+
+#Adding Edge 7 to the measurements      
+Stair_0Test9 = Kenny_True[(Kenny_True.target == "B16Z_58ACI_1PB_BSCV2")]
+Stair_0Test9 = Stair_0Test9.reset_index(drop=True)
+
+#Selecting the 8,9 Edge
+Stair_0Test9 = Stair_0Test9[(Stair_0Test9.edges == "8,9")]
+Stair_0Test9 = Stair_0Test9.reset_index(drop=True)
+#Matching to Zones
+Stair_0Test9["Zones"] = None
+for ii in range(len(Stair_0Test9)):
+    if (Stair_0Test9.ROIID[ii] ==1):
+        Stair_0Test9.Zones[ii] = "Zone1"
+    elif (Stair_0Test9.ROIID[ii] ==2):
+        Stair_0Test9.Zones[ii] = "Zone2"
+    elif (Stair_0Test9.ROIID[ii] ==3):
+        Stair_0Test9.Zones[ii] = "Zone3"
+    elif (Stair_0Test9.ROIID[ii] ==4):
+        Stair_0Test9.Zones[ii] = "Zone4"
+    elif (Stair_0Test9.ROIID[ii] ==5):
+        Stair_0Test9.Zones[ii] = "Zone5"
+    elif (Stair_0Test9.ROIID[ii] ==6):
+        Stair_0Test9.Zones[ii] = "Zone6"
+    elif (Stair_0Test9.ROIID[ii] ==7):
+        Stair_0Test9.Zones[ii] = "Zone7"
+    elif (Stair_0Test9.ROIID[ii] ==8):
+        Stair_0Test9.Zones[ii] = "Zone8"
+#Appending the Bottom CDs to the Master File for Cum Error Calculations
+Stair_0Test1["Edge_7"] = None
+for jj in range(len(Stair_0Test1)):
+    for kk in range(len(Stair_0Test9)):
+        if ((Stair_0Test1.SemDieX[jj] == Stair_0Test9.SemDieX[kk]) & (Stair_0Test1.SemDieY[jj] == Stair_0Test9.SemDieY[kk]) & (Stair_0Test1.Zones[jj] == Stair_0Test9.Zones[kk]) ):
+            Stair_0Test1.Edge_7[jj] = Stair_0Test9.BotCD[kk]   
+
+
+
+#Adding Edge 8 to the measurements      
+Stair_0Test10 = Kenny_True[(Kenny_True.target == "B16Z_58ACI_1PB_BSCV2")]
+Stair_0Test10 = Stair_0Test10.reset_index(drop=True)
+
+#Selecting the 9,10 Edge
+Stair_0Test10 = Stair_0Test10[(Stair_0Test10.edges == "9,10")]
+Stair_0Test10 = Stair_0Test10.reset_index(drop=True)
+#Matching to Zones
+Stair_0Test10["Zones"] = None
+for ii in range(len(Stair_0Test10)):
+    if (Stair_0Test10.ROIID[ii] ==1):
+        Stair_0Test10.Zones[ii] = "Zone1"
+    elif (Stair_0Test10.ROIID[ii] ==2):
+        Stair_0Test10.Zones[ii] = "Zone2"
+    elif (Stair_0Test10.ROIID[ii] ==3):
+        Stair_0Test10.Zones[ii] = "Zone3"
+    elif (Stair_0Test10.ROIID[ii] ==4):
+        Stair_0Test10.Zones[ii] = "Zone4"
+    elif (Stair_0Test10.ROIID[ii] ==5):
+        Stair_0Test10.Zones[ii] = "Zone5"
+    elif (Stair_0Test10.ROIID[ii] ==6):
+        Stair_0Test10.Zones[ii] = "Zone6"
+    elif (Stair_0Test10.ROIID[ii] ==7):
+        Stair_0Test10.Zones[ii] = "Zone7"
+    elif (Stair_0Test10.ROIID[ii] ==8):
+        Stair_0Test10.Zones[ii] = "Zone8"
+#Appending the Bottom CDs to the Master File for Cum Error Calculations
+Stair_0Test1["Edge_8"] = None
+for jj in range(len(Stair_0Test1)):
+    for kk in range(len(Stair_0Test10)):
+        if ((Stair_0Test1.SemDieX[jj] == Stair_0Test10.SemDieX[kk]) & (Stair_0Test1.SemDieY[jj] == Stair_0Test10.SemDieY[kk]) & (Stair_0Test1.Zones[jj] == Stair_0Test10.Zones[kk]) ):
+            Stair_0Test1.Edge_8[jj] = Stair_0Test10.BotCD[kk]   
+
+
+# All-Stair Cum SPEC and Cum Edges
+Zones= ["Zone1", "Zone2", "Zone3", "Zone4", "Zone5", "Zone6", "Zone7", "Zone8"]
+SPEC_0 = [955,975.43,984.39,858.55,871.33,953.49,919.39,946.21]
+SPEC_1 = [955,1012.24,1005.24,887.20,884.43,963.23,956.62,948.61]
+SPEC_2 = [955,1007.01,990.50,897.64,899.10,946.18,935.37,948.71]
+SPEC_3 = [955,1030,1012.83,925.44,918.12,959.21,953.95,940.8]
+SPEC_4 = [955,1021.05,1007.04,919.78,925.79,941.94,932.79,946.88]
+SPEC_5 = [955,1055.44,1050.17,963.08,961.83,961.15,959.19,950.22]
+SPEC_6 = [955,1018.48,1012.47,934.81,947.84,945.73,935.20,951.54]
+SPEC_7 = [955,1059.28,1060.75,963.65,982.39,956.5,952.24,941.94]
+SPEC_8 = [1155,1260.713,1259.246,1191.35,1182.61,1153.5,1157.76,1168.06]
+Index_Names = ('ZoneNames','Tier8', 'Tier7', 'Tier6', 'Tier5','Tier4', 'Tier3', 'Tier2', 'Tier1', 'Tier0')
+
+
+
+
+import numpy as np
+SPEC = [Zones, SPEC_8, SPEC_7, SPEC_6, SPEC_5, SPEC_4, SPEC_3, SPEC_2, SPEC_1, SPEC_0]
+
+import pandas as pd
+SPEC2 = pd.DataFrame(SPEC, index= Index_Names, columns= Zones)
+
+Edge_0 = [26521.06,29224.1,28905.05,31030.54,31118.2,27883.92,28107.19,26574.2]
+Edge_1 = [31521.06,34169.96,33878.84,35967.64,36065.87,32880.91,33035.97,31556.62]
+Edge_2 = [36521.06,39196.43,38874.32,40932.04,41009.73,37897.37,38039.21,36543.85]
+Edge_3 = [41521.06,44138.45,43820.31,45887.31,45952.92,42879.73,42999.95,41531.27]
+Edge_4 = [46521.06,49133.47,48790.98,50868.2,50904.17,47888.15,47997.85,46502.88]
+Edge_5 = [51521.06,54100.56,53735.06,55812.76,55850.74,52862.03,52953.43,51486.63]
+Edge_6 = [56521.06,59116.43,58745.39,60823.93,60849.39,57874.33,57961.82,56477.08]
+Edge_7 = [61521.06,64038.4,63670.33,65758.54,65800.08,62855.8,62922.2,61470.16]
+Edge_8 = [66521.06,69036.97,68671.84,70730.85,70799.86,67858.8,67916.69,66444.03]
+
+EDGE = [Zones,Edge_8, Edge_7, Edge_6, Edge_5, Edge_4, Edge_3, Edge_2, Edge_1, Edge_0]
+
+EDGE2 = pd.DataFrame(EDGE, index= Index_Names, columns= Zones)
+
+
+#Adding together the Cumulative Edges
+Stair_0Test1['CumEdge_0'] = (Stair_0Test1['CogXIntermediate'] - Stair_0Test1['SGS_Measurements'])* 10
+Stair_0Test1['CumEdge_1'] = (Stair_0Test1['CogXIntermediate'] - Stair_0Test1['SGS_Measurements'])* 10 + Stair_0Test1['Edge_1']
+Stair_0Test1['CumEdge_2'] = (Stair_0Test1['CogXIntermediate'] - Stair_0Test1['SGS_Measurements'])* 10 + Stair_0Test1['Edge_1'] + Stair_0Test1['Edge_2']
+Stair_0Test1['CumEdge_3'] = (Stair_0Test1['CogXIntermediate'] - Stair_0Test1['SGS_Measurements'])* 10 + Stair_0Test1['Edge_1'] + Stair_0Test1['Edge_2']+ Stair_0Test1['Edge_3']
+Stair_0Test1['CumEdge_4'] = (Stair_0Test1['CogXIntermediate'] - Stair_0Test1['SGS_Measurements'])* 10 + Stair_0Test1['Edge_1'] + Stair_0Test1['Edge_2']+ Stair_0Test1['Edge_3'] + Stair_0Test1['Edge_4']
+Stair_0Test1['CumEdge_5'] = (Stair_0Test1['CogXIntermediate'] - Stair_0Test1['SGS_Measurements'])* 10 + Stair_0Test1['Edge_1'] + Stair_0Test1['Edge_2']+ Stair_0Test1['Edge_3'] + Stair_0Test1['Edge_4'] + Stair_0Test1['Edge_5']
+Stair_0Test1['CumEdge_6'] = (Stair_0Test1['CogXIntermediate'] - Stair_0Test1['SGS_Measurements'])* 10 + Stair_0Test1['Edge_1'] + Stair_0Test1['Edge_2']+ Stair_0Test1['Edge_3'] + Stair_0Test1['Edge_4'] + Stair_0Test1['Edge_5'] + Stair_0Test1['Edge_6']
+Stair_0Test1['CumEdge_7'] = (Stair_0Test1['CogXIntermediate'] - Stair_0Test1['SGS_Measurements'])* 10 + Stair_0Test1['Edge_1'] + Stair_0Test1['Edge_2']+ Stair_0Test1['Edge_3'] + Stair_0Test1['Edge_4'] + Stair_0Test1['Edge_5'] + Stair_0Test1['Edge_6'] + Stair_0Test1['Edge_7']
+Stair_0Test1['CumEdge_8'] = (Stair_0Test1['CogXIntermediate'] - Stair_0Test1['SGS_Measurements'])* 10 + Stair_0Test1['Edge_1'] + Stair_0Test1['Edge_2']+ Stair_0Test1['Edge_3'] + Stair_0Test1['Edge_4'] + Stair_0Test1['Edge_5'] + Stair_0Test1['Edge_6'] + Stair_0Test1['Edge_7'] + Stair_0Test1['Edge_8']
+
+
+
+#Adding the Cumulative SPECs and Cumulative Edges to the Raw data file to ensure proper calculations
+Stair_0Test1['CumSPEC0'] = None
+for ll in range (len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == SPEC2.iat[0,mm]:
+            Stair_0Test1.CumSPEC0[ll] = SPEC2.iat[9, mm]
+
+
+Stair_0Test1['CumSPEC1'] = None
+for ll in range(len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == SPEC2.iat[0,mm]:
+            Stair_0Test1.CumSPEC1[ll] = SPEC2.iat[8, mm]
+
+Stair_0Test1['CumSPEC2'] = None
+for ll in range(len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == SPEC2.iat[0,mm]:
+            Stair_0Test1.CumSPEC2[ll] = SPEC2.iat[7, mm]
+
+
+Stair_0Test1['CumSPEC3'] = None
+for ll in range(len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == SPEC2.iat[0,mm]:
+            Stair_0Test1.CumSPEC3[ll] = SPEC2.iat[6, mm]
+
+
+
+Stair_0Test1['CumSPEC4'] = None
+for ll in range(len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == SPEC2.iat[0,mm]:
+            Stair_0Test1.CumSPEC4[ll] = SPEC2.iat[5, mm]
+
+
+Stair_0Test1['CumSPEC5'] = None
+for ll in range(len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == SPEC2.iat[0,mm]:
+            Stair_0Test1.CumSPEC5[ll] = SPEC2.iat[4, mm]
+
+
+
+Stair_0Test1['CumSPEC6'] = None
+for ll in range(len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == SPEC2.iat[0,mm]:
+            Stair_0Test1.CumSPEC6[ll] = SPEC2.iat[3, mm]
+            
+            
+Stair_0Test1['CumSPEC7'] = None
+for ll in range(len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == SPEC2.iat[0,mm]:
+            Stair_0Test1.CumSPEC7[ll] = SPEC2.iat[2, mm]            
+            
+            
+
+Stair_0Test1['CumSPEC8'] = None
+for ll in range(len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == SPEC2.iat[0,mm]:
+            Stair_0Test1.CumSPEC8[ll] = SPEC2.iat[1, mm]   
+
+
+
+#Adding the Edges to get Edge to Edge correlations
+
+Stair_0Test1['EdgeSPEC0'] = None
+for ll in range (len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == EDGE2.iat[0,mm]:
+            Stair_0Test1.EdgeSPEC0[ll] = EDGE2.iat[9, mm]
+
+
+Stair_0Test1['EdgeSPEC1'] = None
+for ll in range(len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == EDGE2.iat[0,mm]:
+            Stair_0Test1.EdgeSPEC1[ll] = EDGE2.iat[8, mm]
+
+Stair_0Test1['EdgeSPEC2'] = None
+for ll in range(len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == EDGE2.iat[0,mm]:
+            Stair_0Test1.EdgeSPEC2[ll] = EDGE2.iat[7, mm]
+
+
+Stair_0Test1['EdgeSPEC3'] = None
+for ll in range(len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == EDGE2.iat[0,mm]:
+            Stair_0Test1.EdgeSPEC3[ll] = EDGE2.iat[6, mm]
+
+
+
+Stair_0Test1['EdgeSPEC4'] = None
+for ll in range(len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == EDGE2.iat[0,mm]:
+            Stair_0Test1.EdgeSPEC4[ll] = EDGE2.iat[5, mm]
+
+
+Stair_0Test1['EdgeSPEC5'] = None
+for ll in range(len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == EDGE2.iat[0,mm]:
+            Stair_0Test1.EdgeSPEC5[ll] = EDGE2.iat[4, mm]
+
+
+
+Stair_0Test1['EdgeSPEC6'] = None
+for ll in range(len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == EDGE2.iat[0,mm]:
+            Stair_0Test1.EdgeSPEC6[ll] = EDGE2.iat[3, mm]
+            
+            
+Stair_0Test1['EdgeSPEC7'] = None
+for ll in range(len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == EDGE2.iat[0,mm]:
+            Stair_0Test1.EdgeSPEC7[ll] = EDGE2.iat[2, mm]            
+            
+            
+
+Stair_0Test1['EdgeSPEC8'] = None
+for ll in range(len(Stair_0Test1)):
+    for mm in range(len(Zones)):
+        if Stair_0Test1.loc[ll, "Zones"] == EDGE2.iat[0,mm]:
+            Stair_0Test1.EdgeSPEC8[ll] = EDGE2.iat[1, mm]   
+
+
+#Getting the Cum Error Values and the absolute Cum Error Values
+
+Stair_0Test1['CumError_Edge0'] = Stair_0Test1['CumEdge_0'] - Stair_0Test1['EdgeSPEC0']
+Stair_0Test1['CumError_Edge1'] = Stair_0Test1['CumEdge_1'] - Stair_0Test1['EdgeSPEC1']
+Stair_0Test1['CumError_Edge2'] = Stair_0Test1['CumEdge_2'] - Stair_0Test1['EdgeSPEC2']            
+Stair_0Test1['CumError_Edge3'] = Stair_0Test1['CumEdge_3'] - Stair_0Test1['EdgeSPEC3']    
+Stair_0Test1['CumError_Edge4'] = Stair_0Test1['CumEdge_4'] - Stair_0Test1['EdgeSPEC4'] 
+Stair_0Test1['CumError_Edge5'] = Stair_0Test1['CumEdge_5'] - Stair_0Test1['EdgeSPEC5']
+Stair_0Test1['CumError_Edge6'] = Stair_0Test1['CumEdge_6'] - Stair_0Test1['EdgeSPEC6']
+Stair_0Test1['CumError_Edge7'] = Stair_0Test1['CumEdge_7'] - Stair_0Test1['EdgeSPEC7']
+Stair_0Test1['CumError_Edge8'] = Stair_0Test1['CumEdge_8'] - Stair_0Test1['EdgeSPEC8']
+
+#Getting the Abs Cum SPEC Values
+
+Stair_0Test1['AbsCumError_Edge0'] = abs(Stair_0Test1['CumEdge_0'] - Stair_0Test1['EdgeSPEC0']) - Stair_0Test1['CumSPEC0']
+Stair_0Test1['AbsCumError_Edge1'] = abs(Stair_0Test1['CumEdge_1'] - Stair_0Test1['EdgeSPEC1']) - Stair_0Test1['CumSPEC1']
+Stair_0Test1['AbsCumError_Edge2'] = abs(Stair_0Test1['CumEdge_2'] - Stair_0Test1['EdgeSPEC2']) - Stair_0Test1['CumSPEC2']            
+Stair_0Test1['AbsCumError_Edge3'] = abs(Stair_0Test1['CumEdge_3'] - Stair_0Test1['EdgeSPEC3']) - Stair_0Test1['CumSPEC3']    
+Stair_0Test1['AbsCumError_Edge4'] = abs(Stair_0Test1['CumEdge_4'] - Stair_0Test1['EdgeSPEC4']) - Stair_0Test1['CumSPEC4'] 
+Stair_0Test1['AbsCumError_Edge5'] = abs(Stair_0Test1['CumEdge_5'] - Stair_0Test1['EdgeSPEC5']) - Stair_0Test1['CumSPEC5']
+Stair_0Test1['AbsCumError_Edge6'] = abs(Stair_0Test1['CumEdge_6'] - Stair_0Test1['EdgeSPEC6']) - Stair_0Test1['CumSPEC6']
+Stair_0Test1['AbsCumError_Edge7'] = abs(Stair_0Test1['CumEdge_7'] - Stair_0Test1['EdgeSPEC7']) - Stair_0Test1['CumSPEC7']
+Stair_0Test1['AbsCumError_Edge8'] = abs(Stair_0Test1['CumEdge_8'] - Stair_0Test1['EdgeSPEC8']) - Stair_0Test1['CumSPEC8']
+
+
+
+
+
+
+
+
+#Pre-graph plot data massaging and Filtering to remove extreme fliers and thus ensure graphs are as neat as they should be
+
+zoom51= ("AbsCumError_Edge0", "AbsCumError_Edge1", "AbsCumError_Edge2", "AbsCumError_Edge3", "AbsCumError_Edge4", "AbsCumError_Edge5", "Abs_CumError_Edge6", "Abs_CumError_Edge7", "Abs_CumError_Edge8") 
+Deletable= []
+for Abs_SPEC in zoom51:
+    for Abs in list(Stair_0Test1.columns):
+        if Abs_SPEC == Abs:
+            for p in range(len(Stair_0Test1)):
+                if Stair_0Test1.loc[p, Abs] > 3000:
+                    Deletable.append(Stair_0Test1.index[p])
+ 
+Stairs_0Test1 = Stair_0Test1.drop(Stair_0Test1.index[Deletable])
+Stairs_0Test1 = Stairs_0Test1[(Stairs_0Test1.Zones != "No_Zone")]
+
+#Graph plots
+from matplotlib import pyplot as plt
+import seaborn as sns
+%matplotlib inline
+m, axes = plt.subplots(5,2,figsize =(20,30))
+
+k= sns.boxplot(data= Stairs_0Test1, x= 'Zones', y= 'AbsCumError_Edge0', ax= axes[0,0])
+l= sns.boxplot(data= Stairs_0Test1, x= 'Zones', y= 'AbsCumError_Edge1', ax= axes[0,1])
+n= sns.boxplot(data= Stairs_0Test1, x= 'Zones', y= 'AbsCumError_Edge2', ax= axes[1,0])
+p= sns.boxplot(data= Stairs_0Test1, x= 'Zones', y= 'AbsCumError_Edge3', ax= axes[1,1])
+r= sns.boxplot(data= Stairs_0Test1, x= 'Zones', y= 'AbsCumError_Edge4', ax= axes[2,0])
+t= sns.boxplot(data= Stairs_0Test1, x= 'Zones', y= 'AbsCumError_Edge5', ax= axes[2,1])
+v= sns.boxplot(data= Stairs_0Test1, x= 'Zones', y= 'AbsCumError_Edge6', ax= axes[3,0])
+x= sns.boxplot(data= Stairs_0Test1, x= 'Zones', y= 'AbsCumError_Edge7', ax= axes[3,1])
+z= sns.boxplot(data= Stairs_0Test1, x= 'Zones', y= 'AbsCumError_Edge8', ax= axes[4,0])
+
+#Getting the titles setup
+k.set_title('Tier-2-Tier', fontsize = 25)
+l.set_title('Tier-1', fontsize = 25)
+n.set_title('Tier-2', fontsize = 25)
+p.set_title('Tier-3', fontsize = 25)
+r.set_title('Tier-4', fontsize = 25)
+t.set_title('Tier-5', fontsize = 25)
+v.set_title('Tier-6', fontsize = 25)
+x.set_title('Tier-7', fontsize = 25)
+z.set_title('Tier-8', fontsize = 25)
+
+plt.show()
+
+#Emailing a dataframe object to yourself for manipulation in JMP
+#Saving the Dataframe as an excel file
+from pandas import ExcelWriter
+ 
+writer = ExcelWriter('C:\\Users\\TALABI\\B16Z_58ACIData.xlsx')
+Stairs_0Test1.to_excel(writer,'Sheet1')
+writer.save()
+ 
+ 
+#Sending the dataframe excel file as an email attachement to myself
+import win32com.client as win32
+outlook = win32.Dispatch('outlook.application')
+mail = outlook.CreateItem(0)
+mail.To = 'talabi@micron.com'
+mail.Subject = '58ACI_B16Z_Mail_Attachment'
+mail.Body = 'This is an autogenerated email with attachement of the 58ACI measurements'
+mail.HTMLBody = '<h2>HTML Message body</h2>'# this field is optional
+ 
+#In case you want to attach a file to the email
+attachment  = "C:\\Users\\TALABI\\B16Z_58ACIData.xlsx"
+mail.Attachments.Add(attachment)
+ 
+mail.Send()
+
+
+
+
+
+
+#Graph plots II
+RegionA = Stairs_0Test1[(Stairs_0Test1.Region == "A")]
+from matplotlib import pyplot as plt
+import seaborn as sns
+%matplotlib inline
+mm, axes2 = plt.subplots(5,2,figsize =(20,30))
+
+kk= sns.boxplot(data= RegionA, x= 'Zones', y= 'AbsCumError_Edge0', ax= axes2[0,0])
+ll= sns.boxplot(data= RegionA, x= 'Zones', y= 'AbsCumError_Edge1', ax= axes2[0,1])
+nn= sns.boxplot(data= RegionA, x= 'Zones', y= 'AbsCumError_Edge2', ax= axes2[1,0])
+pp= sns.boxplot(data= RegionA, x= 'Zones', y= 'AbsCumError_Edge3', ax= axes2[1,1])
+rr= sns.boxplot(data= RegionA, x= 'Zones', y= 'AbsCumError_Edge4', ax= axes2[2,0])
+tt= sns.boxplot(data= RegionA, x= 'Zones', y= 'AbsCumError_Edge5', ax= axes2[2,1])
+vv= sns.boxplot(data= RegionA, x= 'Zones', y= 'AbsCumError_Edge6', ax= axes2[3,0])
+xx= sns.boxplot(data= RegionA, x= 'Zones', y= 'AbsCumError_Edge7', ax= axes2[3,1])
+zz= sns.boxplot(data= RegionA, x= 'Zones', y= 'AbsCumError_Edge8', ax= axes2[4,0])
+
+#Getting the titles setup
+kk.set_title('Tier-2-Tier_A', fontsize = 25)
+ll.set_title('Tier-1_A', fontsize = 25)
+nn.set_title('Tier-2_A', fontsize = 25)
+pp.set_title('Tier-3_A', fontsize = 25)
+rr.set_title('Tier-4_A', fontsize = 25)
+tt.set_title('Tier-5_A', fontsize = 25)
+vv.set_title('Tier-6_A', fontsize = 25)
+xx.set_title('Tier-7_A', fontsize = 25)
+zz.set_title('Tier-8_A', fontsize = 25)
+
+
+plt.show()
+
+
+
+#Graph plots III
+RegionBCD = Stairs_0Test1[(Stairs_0Test1.Region == "B") | (Stairs_0Test1.Region == "C") | (Stairs_0Test1.Region == "D")]
+from matplotlib import pyplot as plt
+import seaborn as sns
+%matplotlib inline
+mm, axes3 = plt.subplots(5,2,figsize =(20,30))
+
+kkk= sns.boxplot(data= RegionBCD, x= 'Zones', y= 'AbsCumError_Edge0', ax= axes3[0,0])
+lll= sns.boxplot(data= RegionBCD, x= 'Zones', y= 'AbsCumError_Edge1', ax= axes3[0,1])
+nnn= sns.boxplot(data= RegionBCD, x= 'Zones', y= 'AbsCumError_Edge2', ax= axes3[1,0])
+ppp= sns.boxplot(data= RegionBCD, x= 'Zones', y= 'AbsCumError_Edge3', ax= axes3[1,1])
+rrr= sns.boxplot(data= RegionBCD, x= 'Zones', y= 'AbsCumError_Edge4', ax= axes3[2,0])
+ttt= sns.boxplot(data= RegionBCD, x= 'Zones', y= 'AbsCumError_Edge5', ax= axes3[2,1])
+vvv= sns.boxplot(data= RegionBCD, x= 'Zones', y= 'AbsCumError_Edge6', ax= axes3[3,0])
+xxx= sns.boxplot(data= RegionBCD, x= 'Zones', y= 'AbsCumError_Edge7', ax= axes3[3,1])
+zzz= sns.boxplot(data= RegionBCD, x= 'Zones', y= 'AbsCumError_Edge8', ax= axes3[4,0])
+
+#Getting the titles setup
+kkk.set_title('Tier-2-Tier_BCD', fontsize = 25)
+lll.set_title('Tier-1_BCD', fontsize = 25)
+nnn.set_title('Tier-2_BCD', fontsize = 25)
+ppp.set_title('Tier-3_BCD', fontsize = 25)
+rrr.set_title('Tier-4_BCD', fontsize = 25)
+ttt.set_title('Tier-5_BCD', fontsize = 25)
+vvv.set_title('Tier-6_BCD', fontsize = 25)
+xxx.set_title('Tier-7_BCD', fontsize = 25)
+
+plt.show()
+
+
+#Graph plots IV
+RegionE = Stairs_0Test1[(Stairs_0Test1.Region == "E")]
+from matplotlib import pyplot as plt
+import seaborn as sns
+%matplotlib inline
+mm, axes4 = plt.subplots(5,2,figsize =(20,30))
+
+kkkk= sns.boxplot(data= RegionE, x= 'Zones', y= 'AbsCumError_Edge0', ax= axes4[0,0])
+llll= sns.boxplot(data= RegionE, x= 'Zones', y= 'AbsCumError_Edge1', ax= axes4[0,1])
+nnnn= sns.boxplot(data= RegionE, x= 'Zones', y= 'AbsCumError_Edge2', ax= axes4[1,0])
+pppp= sns.boxplot(data= RegionE, x= 'Zones', y= 'AbsCumError_Edge3', ax= axes4[1,1])
+rrrr= sns.boxplot(data= RegionE, x= 'Zones', y= 'AbsCumError_Edge4', ax= axes4[2,0])
+tttt= sns.boxplot(data= RegionE, x= 'Zones', y= 'AbsCumError_Edge5', ax= axes4[2,1])
+vvvv= sns.boxplot(data= RegionE, x= 'Zones', y= 'AbsCumError_Edge6', ax= axes4[3,0])
+xxxx= sns.boxplot(data= RegionE, x= 'Zones', y= 'AbsCumError_Edge7', ax= axes4[3,1])
+zzzz= sns.boxplot(data= RegionE, x= 'Zones', y= 'AbsCumError_Edge8', ax= axes4[4,0])
+
+#Getting the titles setup
+kkkk.set_title('Tier-2-Tier_E', fontsize = 25)
+llll.set_title('Tier-1_E', fontsize = 25)
+nnnn.set_title('Tier-2_E', fontsize = 25)
+pppp.set_title('Tier-3_E', fontsize = 25)
+rrrr.set_title('Tier-4_E', fontsize = 25)
+tttt.set_title('Tier-5_E', fontsize = 25)
+vvvv.set_title('Tier-6_E', fontsize = 25)
+xxxx.set_title('Tier-7_E', fontsize = 25)
+
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Selecting the Zone 1 and the Zone 4 for inline measurement and correlations
+StairZone1 = Stairs_0Test1[(Stairs_0Test1.Zones == "Zone1")]
+StairZone1 = StairZone1.reset_index(drop=True)
+StairZone2 = Stairs_0Test1[(Stairs_0Test1.Zones == "Zone2")]
+StairZone2 = StairZone2.reset_index(drop=True)
+StairZone3 = Stairs_0Test1[(Stairs_0Test1.Zones == "Zone3")]
+StairZone3 = StairZone3.reset_index(drop=True)
+StairZone4 = Stairs_0Test1[(Stairs_0Test1.Zones == "Zone4")]
+StairZone4 = StairZone4.reset_index(drop=True)
+StairZone5 = Stairs_0Test1[(Stairs_0Test1.Zones == "Zone5")]
+StairZone5 = StairZone5.reset_index(drop=True)
+StairZone6 = Stairs_0Test1[(Stairs_0Test1.Zones == "Zone6")]
+StairZone6 = StairZone6.reset_index(drop=True)
+StairZone7 = Stairs_0Test1[(Stairs_0Test1.Zones == "Zone7")]
+StairZone7 = StairZone7.reset_index(drop=True)
+StairZone8 = Stairs_0Test1[(Stairs_0Test1.Zones == "Zone8")]
+StairZone8 = StairZone8.reset_index(drop=True)
+
+
+#Calculating the average fail % per WL
+#Calculating the average fail % per WL for Zone 1
+CumError = ("AbsCumError_Edge0", "AbsCumError_Edge1", "AbsCumError_Edge2", "AbsCumError_Edge3", "AbsCumError_Edge4", "AbsCumError_Edge5", "AbsCumError_Edge6", "AbsCumError_Edge7", "AbsCumError_Edge8")
+
+zoom50 =[]
+zoom51 =[]
+zoom66 =[]
+for cumError in CumError:
+    for xx, col in enumerate(StairZone1.columns):
+        if cumError == StairZone1.columns[xx]:
+            b = -1
+            a = 0
+            c = 0
+            for yy in range(len(StairZone1)):
+                if StairZone1.loc[yy, cumError] < 0 :
+                    b += 1
+            a= 100 - ((b/yy)* 100) 
+            c = StairZone1[cumError].mean()
+            zoom50.append(a)
+            zoom51.append(cumError)
+            zoom66.append(c)
+            
+
+#Calculating the average fail % per WL for Zone 2
+CumError = ("AbsCumError_Edge0", "AbsCumError_Edge1", "AbsCumError_Edge2", "AbsCumError_Edge3", "AbsCumError_Edge4", "AbsCumError_Edge5", "AbsCumError_Edge6", "AbsCumError_Edge7", "AbsCumError_Edge8")
+
+zoom52 = []
+zoom53 = []
+zoom67 = []
+for cumError in CumError:
+    for xx, col in enumerate(StairZone2.columns):
+        if cumError == StairZone2.columns[xx]:
+            b = -1
+            a = 0
+            c = 0
+            for yy in range(len(StairZone2)):
+                if StairZone2.loc[yy, cumError] < 0 :
+                    b += 1
+            a= 100 - ((b/yy)* 100) 
+            c = StairZone1[cumError].mean()
+            zoom52.append(a)
+            zoom53.append(cumError)
+            zoom67.append(c)
+ 
+
+
+#Calculating the average fail % per WL for Zone 3
+CumError = ("AbsCumError_Edge0", "AbsCumError_Edge1", "AbsCumError_Edge2", "AbsCumError_Edge3", "AbsCumError_Edge4", "AbsCumError_Edge5", "AbsCumError_Edge6", "AbsCumError_Edge7", "AbsCumError_Edge8")
+
+zoom54 = []
+zoom55 = []
+zoom68 = []
+for cumError in CumError:
+    for xx, col in enumerate(StairZone3.columns):
+        if cumError == StairZone3.columns[xx]:
+            b = -1
+            a = 0
+            c = 0
+            for yy in range(len(StairZone3)):
+                if StairZone3.loc[yy, cumError] < 0 :
+                    b += 1
+            a= 100 - ((b/yy)* 100) 
+            c = StairZone1[cumError].mean()
+            zoom54.append(a)
+            zoom55.append(cumError)
+            zoom68.append(c)
+            
+ 
+#Calculating the average fail % per WL for Zone 4
+CumError = ("AbsCumError_Edge0", "AbsCumError_Edge1", "AbsCumError_Edge2", "AbsCumError_Edge3", "AbsCumError_Edge4", "AbsCumError_Edge5", "AbsCumError_Edge6", "AbsCumError_Edge7", "AbsCumError_Edge8")
+
+zoom56 = []
+zoom57 = []
+zoom69 = []
+for cumError in CumError:
+    for xx, col in enumerate(StairZone4.columns):
+        if cumError == StairZone4.columns[xx]:
+            b = -1
+            a = 0
+            c = 0
+            for yy in range(len(StairZone4)):
+                if StairZone4.loc[yy, cumError] < 0 :
+                    b += 1
+            a= 100 - ((b/yy)* 100) 
+            c = StairZone1[cumError].mean()
+            zoom56.append(a)
+            zoom57.append(cumError)
+            zoom69.append(c)
+            
+            
+  
+#Calculating the average fail % per WL for Zone 5
+CumError = ("AbsCumError_Edge0", "AbsCumError_Edge1", "AbsCumError_Edge2", "AbsCumError_Edge3", "AbsCumError_Edge4", "AbsCumError_Edge5", "AbsCumError_Edge6", "AbsCumError_Edge7", "AbsCumError_Edge8")
+
+zoom58 = []
+zoom59 = []
+zoom70 = []
+for cumError in CumError:
+    for xx, col in enumerate(StairZone5.columns):
+        if cumError == StairZone5.columns[xx]:
+            b = -1
+            a = 0
+            c = 0
+            for yy in range(len(StairZone5)):
+                if StairZone5.loc[yy, cumError] < 0 :
+                    b += 1
+            a= 100 - ((b/yy)* 100) 
+            c = StairZone1[cumError].mean()
+            zoom58.append(a)
+            zoom59.append(cumError)  
+            zoom70.append(c)
+            
+#Calculating the average fail % per WL for Zone 6
+CumError = ("AbsCumError_Edge0", "AbsCumError_Edge1", "AbsCumError_Edge2", "AbsCumError_Edge3", "AbsCumError_Edge4", "AbsCumError_Edge5", "AbsCumError_Edge6", "AbsCumError_Edge7", "AbsCumError_Edge8")
+
+zoom60 = []
+zoom61 = []
+zoom71 = []
+for cumError in CumError:
+    for xx, col in enumerate(StairZone6.columns):
+        if cumError == StairZone6.columns[xx]:
+            b = -1
+            a = 0
+            c = 0
+            for yy in range(len(StairZone6)):
+                if StairZone6.loc[yy, cumError] < 0 :
+                    b += 1
+            a= 100 - ((b/yy)* 100)
+            c = StairZone1[cumError].mean()
+            zoom60.append(a)
+            zoom61.append(cumError) 
+            zoom71.append(c)
+
+
+
+#Calculating the average fail % per WL for Zone 7
+CumError = ("AbsCumError_Edge0", "AbsCumError_Edge1", "AbsCumError_Edge2", "AbsCumError_Edge3", "AbsCumError_Edge4", "AbsCumError_Edge5", "AbsCumError_Edge6", "AbsCumError_Edge7", "AbsCumError_Edge8")
+
+zoom62 = []
+zoom63 = []
+zoom72 = []
+for cumError in CumError:
+    for xx, col in enumerate(StairZone7.columns):
+        if cumError == StairZone7.columns[xx]:
+            b = -1
+            a = 0
+            c = 0
+            for yy in range(len(StairZone7)):
+                if StairZone7.loc[yy, cumError] < 0 :
+                    b += 1
+            a= 100 - ((b/yy)* 100)
+            c = StairZone1[cumError].mean()
+            zoom62.append(a)
+            zoom63.append(cumError)
+            zoom72.append(c)               
+            
+    
+
+ 
+#Calculating the average fail % per WL for Zone 8
+CumError = ("AbsCumError_Edge0", "AbsCumError_Edge1", "AbsCumError_Edge2", "AbsCumError_Edge3", "AbsCumError_Edge4", "AbsCumError_Edge5", "AbsCumError_Edge6", "AbsCumError_Edge7", "AbsCumError_Edge8")
+
+zoom64 = []
+zoom65 = []
+zoom73 = []
+for cumError in CumError:
+    for xx, col in enumerate(StairZone8.columns):
+        if cumError == StairZone8.columns[xx]:
+            b = -1
+            a = 0
+            c = 0
+            for yy in range(len(StairZone8)):
+                if StairZone8.loc[yy, cumError] < 0 :
+                    b += 1
+            a= 100 - ((b/yy)* 100) 
+            c = StairZone1[cumError].mean()             
+            zoom64.append(a)
+            zoom65.append(cumError)
+            zoom73.append(c)
+            
+import numpy as np 
+import pandas as pd
+import matplotlib.pyplot as plt
+
+Zoom_Finale = zoom50 + zoom52 + zoom54 + zoom56 + zoom58 + zoom60 + zoom62 + zoom64
+Zoom_Finale2 = zoom66 + zoom67 + zoom68 + zoom69 + zoom70 + zoom71 + zoom72 + zoom73
+Zoom_Finale = list(map(int, Zoom_Finale))
+Zoom_Finale2 = list(map(int, Zoom_Finale2))
+Zoom_WLFails= ['57', '59', '61', '63', '65', '67', '69', '71', '73', '20', '22', '24', '26', '28', '30', '32', '34', '36', '19', '21', '23', '25', '27', '29', '31', '33', '35', '01', '03', '05', '07', '09', '11', '13', '15', '17', '02', '04', '06', '08', '10', '12', '14', '16', '18', '39', '41', '43', '45', '47', '49', '51', '53', '55', '38', '40', '42', '44', '46', '48', '50', '52', '54', '56', '58', '60', '62', '64', '66', '68', '70', '72']
+Zoom_WLFails = list(map(int, Zoom_WLFails))
+columnNames = ("Fail_Percentage", "Average_Abs_CumError", "Word_Line")
+Fails = np.column_stack(([Zoom_Finale, Zoom_Finale2, Zoom_WLFails]))
+FailRate1 = pd.DataFrame(Fails, columns= columnNames)
+
+
+#Plotting the fail Rate by WL
+sns.set(rc={"font.size":16, "axes.labelsize":15})
+fig, ax = plt.subplots()
+fig.set_size_inches(18, 8.27)
+zz = sns.swarmplot(data = FailRate1, x = 'Word_Line', y = 'Fail_Percentage', ax=ax)
+zz.set_title('Fail-Percentage by WordLine', fontsize = 25)
+plt.show
+
+import numpy as np 
+import pandas as pd
+import matplotlib.pyplot as plt
+
+#Plotting the Average Absolute Cum_error by WL
+sns.set(rc={"font.size":16, "axes.labelsize":15})
+fig, ax = plt.subplots()
+fig.set_size_inches(18, 8.27)
+yy = sns.swarmplot(data = FailRate1, x = 'Word_Line', y = 'Average_Abs_CumError', ax=ax)
+yy.set_title('Average Absolute Cumulative Error', fontsize = 25)
+plt.show
+
+
+
+
+#Emailing a dataframe object to yourself for manipulation in JMP
+#Saving the Dataframe as an excel file
+from pandas import ExcelWriter
+ 
+writer = ExcelWriter('C:\\Users\\TALABI\\B16Z_58Probe_2_Inline.xlsx')
+FailRate1.to_excel(writer,'Sheet1')
+writer.save()
+ 
+ 
+#Sending the dataframe excel file as an email attachement to myself
+import win32com.client as win32
+outlook = win32.Dispatch('outlook.application')
+mail = outlook.CreateItem(0)
+mail.To = 'talabi@micron.com'
+mail.Subject = '58ACI_B16Z_FailRate_Attachment'
+mail.Body = 'This is an autogenerated email with attachement of the 58ACI Probe fail-rate measurements'
+mail.HTMLBody = '<h2>HTML Message body</h2>'# this field is optional
+ 
+#In case you want to attach a file to the email
+attachment  = "C:\\Users\\TALABI\\B16Z_58Probe_2_Inline.xlsx"
+mail.Attachments.Add(attachment)
+ 
+mail.Send()

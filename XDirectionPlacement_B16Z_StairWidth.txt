@@ -1,0 +1,240 @@
+getwd()
+setwd("C:\\Users\\TALABI\\Desktop\\R_MachineLearning")
+first <- read.csv("16LMachineLearning_3.csv")
+first_1 <- first[c("lotid", "rundate", "parttype", "slotno", "target", "edges", "ScanDie.X", "ScanDie.Y", "BotCD", "CogLocxy.X", "ROIID")]
+
+#Convert some values into Factors
+first_1$lotid <- factor(first_1$lotid)
+first_1$ROIID <- factor(first_1$ROIID)
+first_1$ScanDie.X <- factor(first_1$ScanDie.X)
+first_1$ScanDie.Y <- factor(first_1$ScanDie.Y)
+first_1$slotno <- factor(first_1$slotno)
+
+#Subset only Values for Measuring the CD Widths
+first_2 <- first_1[which(first_1$target == "B16Z_58ACI_1Imb_COG" & first_1$edges == "1,1"),]
+
+#Checking for the end of the row
+EndRow <- nrow(first_2)
+
+#Zone 1 Calculation of x-direction width
+Zone1_Width <- NULL
+Zone1_XPlacement <- NULL
+for (i in 1:EndRow) {
+  if( first_2$ROIID[i] == 2) {
+    Zone1_Width[i] <- (first_2$CogLocxy.X[i+1] - first_2$CogLocxy.X[i] - ((first_2$BotCD[i])/10))/2
+    Zone1_XPlacement[i] <- first_2$CogLocxy.X[i] + ((first_2$BotCD[i])/10) + (3/4)*(first_2$CogLocxy.X[i+1] - first_2$CogLocxy.X[i] - ((first_2$BotCD[i])/10))
+  }
+  else {
+    Zone1_Width[i] <- 0
+    Zone1_XPlacement[i] <- 0
+  }
+}
+
+
+#Zone 2 Calculation of x-direction width
+Zone2_Width <- NULL
+Zone2_XPlacement <- NULL
+for (i in 1:EndRow) {
+  if( first_2$ROIID[i] == 3) {
+    Zone2_Width[i] <- (first_2$CogLocxy.X[i+1] - first_2$CogLocxy.X[i] - (first_2$BotCD[i]/10))
+    Zone2_XPlacement[i] <- first_2$CogLocxy.X[i] + ((first_2$BotCD[i])/10) + (0.5 * (first_2$CogLocxy.X[i+1] - first_2$CogLocxy.X[i] - (first_2$BotCD[i]/10)))
+  }
+  else {
+    Zone2_Width[i] <- 0
+    Zone2_XPlacement[i] <- 0
+  }
+}
+
+
+#Zone 3 Calculation of x-direction width
+Zone3_Width <- NULL
+Zone3_XPlacement <- NULL
+for (i in 1:EndRow) {
+  if( first_2$ROIID[i] == 4) {
+    Zone3_Width[i] <- (first_2$CogLocxy.X[i+1] - first_2$CogLocxy.X[i] - (first_2$BotCD[i]/10))
+    Zone3_XPlacement[i] <- first_2$CogLocxy.X[i] + (first_2$BotCD[i]/10) + (0.5 * (first_2$CogLocxy.X[i+1] - first_2$CogLocxy.X[i] - (first_2$BotCD[i]/10)))
+  }
+  else {
+    Zone3_Width[i] <- 0
+    Zone3_XPlacement[i] <- 0
+  }
+}
+
+
+#Zone 4 Calculation of x-direction width
+Zone4_Width <- NULL
+Zone4_XPlacement <- NULL
+for (i in 1:EndRow) {
+  if( first_2$ROIID[i] == 5) {
+    Zone4_Width[i] <- (first_2$CogLocxy.X[i+1] - first_2$CogLocxy.X[i] - (first_2$BotCD[i]/10))/2
+    Zone4_XPlacement[i] <- first_2$CogLocxy.X[i] + (first_2$BotCD[i]/10) + (0.5 * ((first_2$CogLocxy.X[i+1] - first_2$CogLocxy.X[i] - (first_2$BotCD[i]/10))/2))
+  }
+  else {
+    Zone4_Width[i] <- 0
+    Zone4_XPlacement[i] <- 0
+  }
+}
+
+
+#Zone 5 Calculation of x-direction width
+Zone5_Width <- NULL
+Zone5_XPlacement <- NULL
+for (i in 1:EndRow) {
+  if( first_2$ROIID[i] == 6) {
+    Zone5_Width[i] <- (first_2$CogLocxy.X[i] - first_2$CogLocxy.X[i-1] - (first_2$BotCD[i-1]/10))/2
+    Zone5_XPlacement[i] <- first_2$CogLocxy.X[i-1] + (first_2$BotCD[i-1]/10) + ((3/4)* (first_2$CogLocxy.X[i] - first_2$CogLocxy.X[i-1] - (first_2$BotCD[i-1]/10) ))
+  }
+  else {
+    Zone5_Width[i] <- 0
+    Zone5_XPlacement[i] <- 0
+  }
+}
+
+
+
+#Zone 6 Calculation of x-direction width
+Zone6_Width <- NULL
+Zone6_XPlacement <- NULL
+for (i in 1:EndRow) {
+  if( first_2$ROIID[i] == 7) {
+    Zone6_Width[i] <- (first_2$CogLocxy.X[i] - first_2$CogLocxy.X[i-1] - (first_2$BotCD[i-1]/10))
+    Zone6_XPlacement[i] <- first_2$CogLocxy.X[i-1] + (first_2$BotCD[i-1]/10) + (0.5 * (first_2$CogLocxy.X[i] - first_2$CogLocxy.X[i-1] - (first_2$BotCD[i-1]/10)))
+  }
+  else {
+    Zone6_Width[i] <- 0
+    Zone6_XPlacement[i] <- 0
+  }
+}
+
+
+#Zone 7 Calculation of x-direction width
+Zone7_Width <- NULL
+Zone7_XPlacement <- NULL
+for (i in 1:EndRow) {
+  if( first_2$ROIID[i] == 8) {
+    Zone7_Width[i] <- (first_2$CogLocxy.X[i] - first_2$CogLocxy.X[i-1] - (first_2$BotCD[i-1]/10))
+    Zone7_XPlacement[i] <- first_2$CogLocxy.X[i-1] + (first_2$BotCD[i-1]/10) + (0.5 * (first_2$CogLocxy.X[i] - first_2$CogLocxy.X[i-1] - (first_2$BotCD[i-1]/10)))
+  }
+  else {
+    Zone7_Width[i] <- 0
+    Zone7_XPlacement[i] <-0
+  }
+}
+
+
+#Zone 8 Calculation of x-direction width
+Zone8_Width <- NULL
+Zone8_XPlacement <- NULL
+for (i in 1:EndRow) {
+  if( first_2$ROIID[i] == 9) {
+    Zone8_Width[i] <- (first_2$CogLocxy.X[i] - first_2$CogLocxy.X[i-1] - (first_2$BotCD[i-1]/10))/2
+    Zone8_XPlacement[i] <- first_2$CogLocxy.X[i-1] + (first_2$BotCD[i-1]/10) + (0.5 * (first_2$CogLocxy.X[i] - first_2$CogLocxy.X[i-1] - (first_2$BotCD[i-1]/10))/2)
+  }
+  else {
+    Zone8_Width[i] <- 0
+    Zone8_XPlacement[i] <- 0
+  }
+}
+
+
+
+#Joining all the columns to the first_2
+
+first_3 <- cbind(first_2, Zone1_Width, Zone1_XPlacement, Zone2_Width, Zone2_XPlacement, Zone3_Width, Zone3_XPlacement, Zone4_Width, Zone4_XPlacement, Zone5_Width, Zone5_XPlacement, Zone6_Width, Zone6_XPlacement, Zone7_Width, Zone7_XPlacement, Zone8_Width, Zone8_XPlacement)
+
+
+
+
+
+#Scatter plot of the CD Widths
+library(xkcd)
+library(extrafont)
+
+z <- ggplot(data = first_3, aes( x= ROIID, y= Zone1_Width, color = slotno )) + geom_jitter(width= 0.5, height =0.5)
+
+z  + geom_jitter(width= 0.5, height =0.5) + geom_point (aes(y = Zone2_Width), size =3, position=position_jitterdodge(dodge.width=0.9)) +  scale_y_continuous(name = "Zone-XDirectional_Width(nm)", breaks = seq(50, 2400, 200), limits = c(50,2400)) + geom_point (aes(y =Zone1_Width), size=3, position=position_jitterdodge(dodge.width=0.9))+ geom_point (aes(y = Zone3_Width), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone4_Width), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone5_Width), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone6_Width), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone7_Width), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone8_Width), size =3, position=position_jitterdodge(dodge.width=0.9)) + ggtitle ("x-Direction CD Width (nm)")  +
+  theme(axis.line.x = element_line(size = 0.5, colour = "black"),
+        axis.line.y = element_line(size = 0.5, colour = "black"),
+        axis.line = element_line(size=1, colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        plot.title=element_text(size = 20, family="xkcd-Regular"),
+        text=element_text(size = 16, family="xkcd-Regular"),
+        axis.text.x=element_text(colour="black", size = 12, angle=90),
+        axis.text.y=element_text(colour="black", size = 12))  
+
+
+
+
+z <- ggplot(data = first_3, aes( x= ROIID, y= Zone1_XPlacement, color = slotno )) + geom_jitter()
+
+z  + geom_point (aes(y = Zone2_XPlacement),size =3, position= position_jitterdodge(dodge.width=0.9)) +  scale_y_continuous(name = "Zone-XDirectional_Width(nm)", breaks = seq(50, 12000, 500), limits = c(50,11000)) + geom_point (aes(y =Zone1_XPlacement), size=3)+ geom_point (aes(y = Zone3_XPlacement), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone4_XPlacement), size =3, position=position_jitterdodge(dodge.width=0.9)) +  geom_point (aes(y = Zone5_XPlacement), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone6_XPlacement), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone7_XPlacement), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone8_XPlacement), size =3, position=position_jitterdodge(dodge.width=0.9)) +  ggtitle ("x-Direction CD Width (nm)") +
+  theme(axis.line.x = element_line(size = 0.5, colour = "black"),
+        axis.line.y = element_line(size = 0.5, colour = "black"),
+        axis.line = element_line(size=1, colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        plot.title=element_text(size = 20, family="xkcd-Regular"),
+        text=element_text(size = 16, family="xkcd-Regular"),
+        axis.text.x=element_text(colour="black", size = 12, angle=90),
+        axis.text.y=element_text(colour="black", size = 12))  
+
+
+
+#Creating the matrix dataset with the Median, Standard Deviation for all the Stairs
+#Median Values for Stair-Width
+med_Zone1Width <- median( first_3$Zone1_Width[first_3$Zone1_Width != 0], na.rm = TRUE)
+med_Zone2Width <- median( first_3$Zone2_Width[first_3$Zone2_Width != 0], na.rm = TRUE)
+med_Zone3Width <- median( first_3$Zone3_Width[first_3$Zone3_Width != 0], na.rm = TRUE)
+med_Zone4Width <- median( first_3$Zone4_Width[first_3$Zone4_Width != 0], na.rm = TRUE)
+med_Zone5Width <- median( first_3$Zone5_Width[first_3$Zone5_Width != 0], na.rm = TRUE)
+med_Zone6Width <- median( first_3$Zone6_Width[first_3$Zone6_Width != 0], na.rm = TRUE)
+med_Zone7Width <- median( first_3$Zone7_Width[first_3$Zone7_Width != 0], na.rm = TRUE)
+med_Zone8Width <- median( first_3$Zone8_Width[first_3$Zone8_Width != 0], na.rm = TRUE)
+
+A <- c(med_Zone1Width, med_Zone2Width, med_Zone3Width, med_Zone4Width, med_Zone5Width, med_Zone6Width, med_Zone7Width, med_Zone8Width)
+#Standard Deviation Values for Stair-Width
+STDDEV_Zone1Width <- sd( first_3$Zone1_Width[first_3$Zone1_Width != 0], na.rm = TRUE)
+STDDEV_Zone2Width <- sd( first_3$Zone2_Width[first_3$Zone2_Width != 0], na.rm = TRUE)
+STDDEV_Zone3Width <- sd( first_3$Zone3_Width[first_3$Zone3_Width != 0], na.rm = TRUE)
+STDDEV_Zone4Width <- sd( first_3$Zone4_Width[first_3$Zone4_Width != 0], na.rm = TRUE)
+STDDEV_Zone5Width <- sd( first_3$Zone5_Width[first_3$Zone5_Width != 0], na.rm = TRUE)
+STDDEV_Zone6Width <- sd( first_3$Zone6_Width[first_3$Zone6_Width != 0], na.rm = TRUE)
+STDDEV_Zone7Width <- sd( first_3$Zone7_Width[first_3$Zone7_Width != 0], na.rm = TRUE)
+STDDEV_Zone8Width <- sd( first_3$Zone8_Width[first_3$Zone8_Width != 0], na.rm = TRUE)
+B<- c(STDDEV_Zone1Width, STDDEV_Zone2Width, STDDEV_Zone3Width, STDDEV_Zone4Width, STDDEV_Zone5Width, STDDEV_Zone6Width, STDDEV_Zone7Width, STDDEV_Zone8Width)
+
+#Median Values for x-directional placement
+med_Zone1Place <- median( first_3$Zone1_XPlacement[first_3$Zone1_XPlacement != 0], na.rm = TRUE)
+med_Zone2Place <- median( first_3$Zone2_XPlacement[first_3$Zone2_XPlacement != 0], na.rm = TRUE)
+med_Zone3Place <- median( first_3$Zone3_XPlacement[first_3$Zone3_XPlacement != 0], na.rm = TRUE)
+med_Zone4Place <- median( first_3$Zone4_XPlacement[first_3$Zone4_XPlacement != 0], na.rm = TRUE)
+med_Zone5Place <- median( first_3$Zone5_XPlacement[first_3$Zone5_XPlacement != 0], na.rm = TRUE)
+med_Zone6Place <- median( first_3$Zone6_XPlacement[first_3$Zone6_XPlacement != 0], na.rm = TRUE)
+med_Zone7Place <- median( first_3$Zone7_XPlacement[first_3$Zone7_XPlacement != 0], na.rm = TRUE)
+med_Zone8Place <- median( first_3$Zone8_XPlacement[first_3$Zone8_XPlacement != 0], na.rm = TRUE)
+D<- c(med_Zone1Place, med_Zone2Place, med_Zone3Place, med_Zone4Place, med_Zone5Place, med_Zone6Place, med_Zone7Place, med_Zone8Place)
+
+
+#Standard Deviation Values for x-directional placement
+
+STDDEV_Zone1Place <- sd( first_3$Zone1_XPlacement[first_3$Zone1_XPlacement != 0], na.rm = TRUE)
+STDDEV_Zone2Place <- sd( first_3$Zone2_XPlacement[first_3$Zone2_XPlacement != 0], na.rm = TRUE)
+STDDEV_Zone3Place <- sd( first_3$Zone3_XPlacement[first_3$Zone3_XPlacement != 0], na.rm = TRUE)
+STDDEV_Zone4Place <- sd( first_3$Zone4_XPlacement[first_3$Zone4_XPlacement != 0], na.rm = TRUE)
+STDDEV_Zone5Place <- sd( first_3$Zone5_XPlacement[first_3$Zone5_XPlacement != 0], na.rm = TRUE)
+STDDEV_Zone6Place <- sd( first_3$Zone6_XPlacement[first_3$Zone6_XPlacement != 0], na.rm = TRUE)
+STDDEV_Zone7Place <- sd( first_3$Zone7_XPlacement[first_3$Zone7_XPlacement != 0], na.rm = TRUE)
+STDDEV_Zone8Place <- sd( first_3$Zone8_XPlacement[first_3$Zone8_XPlacement != 0], na.rm = TRUE)
+E<- c(STDDEV_Zone1Place, STDDEV_Zone2Place, STDDEV_Zone3Place, STDDEV_Zone4Place, STDDEV_Zone5Place, STDDEV_Zone6Place, STDDEV_Zone7Place, STDDEV_Zone8Place)
+
+
+Y <- cbind(A,B,D,E)
+colnames(Y) <- c("Median_zoneWidth", "Std.Dev_zonewidth", "Median_xplacement", "Std.Dev_xplacement")
+rownames(Y) <- c("Zone1", "Zone2", "Zone3", "Zone4", "Zone5", "Zone6", "Zone7", "Zone8") 
+
+Y

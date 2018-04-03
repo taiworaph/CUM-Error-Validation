@@ -1,0 +1,162 @@
+#The X-Directional Contact Placement for Cum Error Validation
+getwd()
+setwd("C:\\Users\\TALABI\\Desktop\\R_MachineLearning")
+first <- read.csv("16LMachineLearning_3.csv")
+first_1 <- first[c("lotid", "rundate", "parttype", "slotno", "target", "edges", "ScanDie.X", "ScanDie.Y", "BotCD", "CogLocxy.X", "ROIID")]
+
+#Convert some values into Factors
+first_1$lotid <- factor(first_1$lotid)
+first_1$ROIID <- factor(first_1$ROIID)
+first_1$ScanDie.X <- factor(first_1$ScanDie.X)
+first_1$ScanDie.Y <- factor(first_1$ScanDie.Y)
+first_1$slotno <- factor(first_1$slotno)
+
+#Subset only Values for Measuring the CD Widths
+first_2 <- first_1[which(first_1$target == "B16Z_58ACI_1Imb_COG" & first_1$edges == "1,1"),]
+
+#Checking for the end of the row
+EndRow <- nrow(first_2)
+
+#Zone 1 Calculation of x-direction Edge
+Zone1_Edge <- NULL
+Zone1_NominalEdge <- NULL
+Zone1_UPHill_SPEC <- NULL
+Zone1_DownHill_SPEC <- NULL
+for (i in 1:EndRow) {
+  if( first_2$ROIID[i] == 2) {
+    Zone1_Edge[i] <- (first_2$CogLocxy.X[i+1] - first_2$CogLocxy.X[i] - ((first_2$BotCD[i])/10))/2 + (first_2$BotCD[i+1]/10)
+    Zone1_NominalEdge[i] <- 1438
+    Zone1_UPHill_SPEC[i] <- 302.85
+    Zone1_DownHill_SPEC <- 407.18
+      }
+  else {
+    Zone1_Edge[i] <- 0
+    Zone1_NominalEdge[i] <- 0
+    Zone1_UPHill_SPEC[i] <- 0
+    Zone1_DownHill_SPEC[i]<- 0
+  }
+}
+
+
+#Zone 2 Calculation of x-direction Edge
+Zone2_Edge <- NULL
+Zone2_NominalEdge <- NULL
+Zone2_UPHill_SPEC <- NULL
+Zone2_DownHill_SPEC <- NULL
+for (i in 1:EndRow) {
+  if( first_2$ROIID[i] == 3) {
+    Zone2_Edge[i] <- (first_2$CogLocxy.X[i] - first_2$CogLocxy.X[i-1] - ((first_2$BotCD[i-1])/10))/2 + first_2$BotCD[i]/10 +(first_2$CogLocxy.X[i+1] - first_2$CogLocxy.X[i] +(first_2$BotCD[i+1])/20 - (first_2$BotCD[i]/10))
+    Zone2_NominalEdge[i] <- 1655
+    Zone2_UPHill_SPEC[i] <- 179.85
+    Zone2_DownHill_SPEC[i]<- 141.85
+    }
+      else {
+    Zone2_Edge[i] <- 0
+    Zone2_NominalEdge[i] <- 0
+    Zone2_UPHill_SPEC[i] <- 0
+    Zone2_DownHill_SPEC[i]<- 0
+     }
+}
+
+
+#Zone 3 Calculation of x-direction Edge
+Zone3_Edge <- NULL
+Zone3_NominalEdge <- NULL
+Zone3_UPHill_SPEC <- NULL
+Zone3_DownHill_SPEC <- NULL
+for (i in 1:EndRow) {
+  if( first_2$ROIID[i] == 4) {
+    Zone3_Edge[i] <- (first_2$CogLocxy.X[i-1] - first_2$CogLocxy.X[i-2] - ((first_2$BotCD[i-2])/10))/2 + first_2$BotCD[i-1]/10 +(first_2$CogLocxy.X[i] - first_2$CogLocxy.X[i-1] +(first_2$BotCD[i])/20 - (first_2$BotCD[i-1]/10)) -
+      (first_2$BotCD[i]/20) + first_2$CogLocxy.X[i+1] - first_2$CogLocxy.X[i] + (first_2$BotCD[i+1]/20)
+    Zone3_NominalEdge[i] <- 2994
+    Zone3_UPHill_SPEC[i] <- 77.665
+    Zone3_DownHill_SPEC[i]<- 291.665  
+     }
+  else {
+    Zone3_Edge[i] <- 0
+    Zone3_NominalEdge[i] <- 0
+    Zone3_UPHill_SPEC[i] <- 0
+    Zone3_DownHill_SPEC[i]<- 0
+  }
+}
+
+
+#Zone 4 Calculation of x-direction Edge
+Zone4_Edge <- NULL
+Zone4_NominalEdge <- NULL
+Zone4_UPHill_SPEC <- NULL
+Zone4_DownHill_SPEC <- NULL
+for (i in 1:EndRow) {
+  if( first_2$ROIID[i] == 5) {
+    Zone4_Edge[i] <- (first_2$CogLocxy.X[i-2] - first_2$CogLocxy.X[i-3] - ((first_2$BotCD[i-3])/10))/2 + first_2$BotCD[i-2]/10 +(first_2$CogLocxy.X[i-1] - first_2$CogLocxy.X[i-2] +(first_2$BotCD[i-1])/20 - (first_2$BotCD[i-2]/10)) -
+      (first_2$BotCD[i-1]/20) + first_2$CogLocxy.X[i] - first_2$CogLocxy.X[i-1] + (first_2$BotCD[i]/20) + (- first_2$BotCD[i]/20 +first_2$CogLocxy.X[i+1] - first_2$CogLocxy.X[i] + (first_2$BotCD[i+1]/20))
+    Zone4_NominalEdge[i] <- 4318
+    Zone4_UPHill_SPEC[i] <- 37.665
+    Zone4_DownHill_SPEC[i]<- 331.665 
+    
+    }
+  else {
+    Zone4_Edge[i] <- 0
+    Zone4_NominalEdge[i] <- 0
+    Zone4_UPHill_SPEC[i] <- 0
+    Zone4_DownHill_SPEC[i]<- 0
+  }
+}
+
+
+#Zone 5 Calculation of x-direction Edge
+Zone5_Edge <- NULL
+Zone5_NominalEdge <- NULL
+Zone5_UPHill_SPEC <- NULL
+Zone5_DownHill_SPEC <- NULL
+for (i in 1:EndRow) {
+  if( first_2$ROIID[i] == 6) {
+    Zone5_Edge[i] <-  (first_2$CogLocxy.X[i-3] - first_2$CogLocxy.X[i-4] - ((first_2$BotCD[i-4])/10))/2 + first_2$BotCD[i-3]/10 +(first_2$CogLocxy.X[i-2] - first_2$CogLocxy.X[i-3] +(first_2$BotCD[i-2])/20 - (first_2$BotCD[i-3]/10)) -
+      (first_2$BotCD[i-2]/20) + first_2$CogLocxy.X[i-1] - first_2$CogLocxy.X[i-2] + (first_2$BotCD[i-1]/20) + (- first_2$BotCD[i-1]/20 +first_2$CogLocxy.X[i] - first_2$CogLocxy.X[i-1] + (first_2$BotCD[i]/20)) +
+      ((first_2$BotCD[i+1]/20) + first_2$CogLocxy.X[i+1]- first_2$CogLocxy.X[i] - (first_2$BotCD[i]/20))
+    Zone5_NominalEdge[i] <- 5244
+    Zone5_UPHill_SPEC[i] <- 341
+    Zone5_DownHill_SPEC[i]<- -54 
+    }
+  else {
+    Zone5_Edge[i] <- 0
+    Zone5_NominalEdge[i] <- 0
+    Zone5_UPHill_SPEC[i] <- 0
+    Zone5_DownHill_SPEC[i]<- 0
+      }
+}
+
+
+
+#Zone 6 Calculation of x-direction Edge
+Zone6_Edge <- NULL
+Zone6_NominalEdge <- NULL
+Zone6_UPHill_SPEC <- NULL
+Zone6_DownHill_SPEC <- NULL
+for (i in 1:EndRow) {
+  if( first_2$ROIID[i] == 7) {
+    Zone6_Edge[i] <- (first_2$CogLocxy.X[i-4] - first_2$CogLocxy.X[i-5] - ((first_2$BotCD[i-5])/10))/2 + first_2$BotCD[i-4]/10 +(first_2$CogLocxy.X[i-3] - first_2$CogLocxy.X[i-4] +(first_2$BotCD[i-3])/20 - (first_2$BotCD[i-4]/10)) -
+      (first_2$BotCD[i-3]/20) + first_2$CogLocxy.X[i-2] - first_2$CogLocxy.X[i-3] + (first_2$BotCD[i-2]/20) + (- first_2$BotCD[i-2]/20 + first_2$CogLocxy.X[i-1] - first_2$CogLocxy.X[i-2] + (first_2$BotCD[i-1]/20)) +
+      ((first_2$BotCD[i]/20) + first_2$CogLocxy.X[i]- first_2$CogLocxy.X[i-1] - (first_2$BotCD[i-1]/20)) + (first_2$CogLocxy.X[i+1] - first_2$CogLocxy.X[i] + first_2$BotCD[i+1]/20 - first_2$BotCD[i]/20)
+    Zone6_NominalEdge[i] <- 5960.5
+    Zone6_UPHill_SPEC[i] <- 326.85
+    Zone6_DownHill_SPEC[i]<- 47.85  
+    }
+  else {
+    Zone6_Edge[i] <- 0
+    Zone6_NominalEdge[i] <- 0
+    Zone6_UPHill_SPEC[i] <- 0
+    Zone6_DownHill_SPEC[i]<- 0  
+  }
+}
+
+
+
+
+
+#Joining all the columns to the first_2
+first_3 <- cbind(first_2, Zone1_Edge, Zone2_Edge, Zone3_Edge, Zone4_Edge, Zone5_Edge, Zone6_Edge, Zone1_NominalEdge, Zone2_NominalEdge,
+                 Zone3_NominalEdge, Zone4_NominalEdge, Zone5_NominalEdge, Zone6_NominalEdge,Zone1_UPHill_SPEC, Zone2_UPHill_SPEC,
+                 Zone3_UPHill_SPEC, Zone4_UPHill_SPEC, Zone5_UPHill_SPEC, Zone6_UPHill_SPEC, Zone1_DownHill_SPEC, Zone2_DownHill_SPEC,
+                 Zone3_DownHill_SPEC, Zone4_DownHill_SPEC, Zone5_DownHill_SPEC, Zone6_DownHill_SPEC)
+

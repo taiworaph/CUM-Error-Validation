@@ -1,0 +1,312 @@
+getwd()
+setwd("C:\\Users\\TALABI\\Desktop\\R_MachineLearning")
+first <- read.csv("B16Z_3.csv")
+first_1 <- first[c("lotid", "rundate", "parttype", "slotno", "target", "edges", "ScanDie.X", "ScanDie.Y", "BotCD", "CogLocxy.X", "ROIID")]
+
+#Convert some values into Factors
+first_1$lotid <- factor(first_1$lotid)
+first_1$ROIID <- factor(first_1$ROIID)
+first_1$ScanDie.X <- factor(first_1$ScanDie.X)
+first_1$ScanDie.Y <- factor(first_1$ScanDie.Y)
+first_1$slotno <- factor(first_1$slotno)
+
+#Subset only Values for Measuring the CD Widths
+first_2 <- first_1[which(first_1$target == "B16Z_58ACI_1Imb_COGV2" & first_1$edges == "1,1"),]
+
+#Checking for the end of the row
+EndRow <- nrow(first_2)
+
+
+#Zone1,Zone2,Zone3,Zone4,Zone5,Zone6,Zone7,Zone8 Width Calculations first
+
+Zone1_Width <- NULL
+Zone2_Width <- NULL
+Zone3_Width <- NULL
+Zone4_Width <- NULL
+Zone5_Width <- NULL
+Zone6_Width <- NULL
+Zone7_Width <- NULL
+Zone8_Width <- NULL
+
+for (i in 1:EndRow) {
+  if(first_2$ROIID[i] == 2) {
+    Zone1_Width[i] <- (first_2$CogLocxy.X[i+8] - first_2$CogLocxy.X[i+7] - ((first_2$BotCD[i+7])/10))/2
+  }
+  else if(first_2$ROIID[i] == 3){
+    Zone2_Width[i] <- (first_2$CogLocxy.X[i+6] - first_2$CogLocxy.X[i+5] - (first_2$BotCD[i+5]/10))
+  }
+  else if(first_2$ROIID[i] == 4) {
+    Zone3_Width[i] <- (first_2$CogLocxy.X[i+4] - first_2$CogLocxy.X[i+3] - (first_2$BotCD[i+3]/10)) 
+  } 
+  else if(first_2$ROIID[i] == 5) {
+    Zone4_Width[i] <- (first_2$CogLocxy.X[i+2] - first_2$CogLocxy.X[i+1] - (first_2$BotCD[i+1]/10)) 
+  }
+  else if(first_2$ROIID[i] == 6) {
+    Zone5_Width[i] <- (first_2$CogLocxy.X[i] - first_2$CogLocxy.X[i-1] - (first_2$BotCD[i-1]/10)) 
+  }
+  else if(first_2$ROIID[i] == 7){
+    Zone6_Width[i] <- (first_2$CogLocxy.X[i-2] - first_2$CogLocxy.X[i-3] - (first_2$BotCD[i-3]/10)) 
+  }
+  else if(first_2$ROIID[i] == 8){
+    Zone7_Width[i] <- (first_2$CogLocxy.X[i-4] - first_2$CogLocxy.X[i-5] - (first_2$BotCD[i-5]/10)) 
+  }
+  else if(first_2$ROIID[i] == 9){
+    Zone8_Width[i] <- (first_2$CogLocxy.X[i-6] - first_2$CogLocxy.X[i-7] - (first_2$BotCD[i-7]/10))/2 
+  }
+  else {
+    Zone1_Width[i] <- 0
+    Zone2_Width[i] <- 0
+    Zone3_Width[i] <- 0
+    Zone4_Width[i] <- 0
+    Zone5_Width[i] <- 0
+    Zone6_Width[i] <- 0
+    Zone7_Width[i] <- 0
+    Zone8_Width[i] <- 0
+  }
+}
+
+first_2 <- cbind(first_2, Zone1_Width, Zone2_Width, Zone3_Width, Zone4_Width, Zone5_Width, Zone6_Width, Zone7_Width, Zone8_Width)
+
+
+#Calculating the Edge Zones next using the already available ZoneX_Width's
+Zone1_Edge <- NULL
+Nominal_Z1 <- NULL
+CADContact_Z1 <- NULL
+Zone2_Edge <- NULL
+Nominal_Z2 <- NULL
+CADContact_Z2 <- NULL
+Zone3_Edge <- NULL
+Nominal_Z3 <- NULL
+CADContact_Z3 <- NULL
+Zone4_Edge <- NULL
+Nominal_Z4 <- NULL
+CADContact_Z4 <- NULL
+Zone5_Edge <- NULL
+Nominal_Z5 <- NULL
+CADContact_Z5 <- NULL
+Zone6_Edge <- NULL
+Nominal_Z6 <- NULL
+CADContact_Z6 <- NULL
+Zone7_Edge <- NULL
+Nominal_Z7 <- NULL
+CADContact_Z7 <- NULL
+
+for (i in 1:EndRow) {
+  if(first_2$ROIID[i] == 2) {
+    Zone1_Edge[i] <- Zone1_Width[i] + (first_2$BotCD[i+7]/10)
+    Nominal_Z1[i] <- 1574.5
+    CADContact_Z1[i] <- 490
+  }
+  else if(first_2$ROIID[i] == 3) {
+    Zone2_Edge[i] <- Zone1_Edge[i-1] + (first_2$CogLocxy.X[i+6] - first_2$CogLocxy.X[i+5])
+    Nominal_Z2[i] <- 2291.0
+    CADContact_Z2[i] <- 1741
+  }
+  else if(first_2$ROIID[i] == 4) {
+    Zone3_Edge[i] <- Zone2_Edge[i-1] + (first_2$CogLocxy.X[i+4] - first_2$CogLocxy.X[i+3])
+    Nominal_Z3[i] <- 3217.0
+    CADContact_Z3[i] <- 2390
+  }
+  else if(first_2$ROIID[i] == 5) {
+    Zone4_Edge[i] <- Zone3_Edge[i-1] + (first_2$CogLocxy.X[i+2] - first_2$CogLocxy.X[i+1])
+    Nominal_Z4[i] <- 3336.5
+    CADContact_Z4[i] <- 3435.8
+  }
+  else if(first_2$ROIID[i] == 6) {
+    Zone5_Edge[i] <- Zone4_Edge[i-1] + (first_2$CogLocxy.X[i] - first_2$CogLocxy.X[i-1])
+    Nominal_Z5[i] <- 4541.0
+    CADContact_Z5[i] <- 4090
+  }
+  else if(first_2$ROIID[i] == 7) {
+    Zone6_Edge[i] <- Zone5_Edge[i-1] + (first_2$CogLocxy.X[i-2] - first_2$CogLocxy.X[i-3])
+    Nominal_Z6[i] <- 5880
+    CADContact_Z6[i] <- 5341
+  }
+  else if(first_2$ROIID[i] == 8) {
+    Zone7_Edge[i] <- Zone6_Edge[i-1] + (first_2$CogLocxy.X[i-4] - first_2$CogLocxy.X[i-5])
+    Nominal_Z7[i] <- 6101.0
+    CADContact_Z7[i] <- 5991
+  }
+  else {
+    Zone1_Edge[i] <- 0
+    Nominal_Z1[i] <- 0
+    CADContact_Z1[i] <- 0
+    Zone2_Edge[i] <- 0
+    Nominal_Z2[i] <- 0
+    CADContact_Z2[i] <- 0
+    Zone3_Edge[i] <- 0
+    Nominal_Z3[i] <- 0
+    CADContact_Z3[i] <- 0
+    Zone4_Edge[i] <- 0
+    Nominal_Z4[i] <- 0
+    CADContact_Z4[i] <- 0
+    Zone5_Edge[i] <- 0
+    Nominal_Z5[i] <- 0
+    CADContact_Z5[i] <- 0
+    Zone6_Edge[i] <- 0
+    Nominal_Z6[i] <- 0
+    CADContact_Z6[i] <- 0
+    Zone7_Edge[i] <- 0 
+    Nominal_Z7[i] <- 0
+    CADContact_Z7[i] <- 0
+  }
+}
+
+first_2 <- cbind(first_2, Zone1_Edge, Zone2_Edge, Zone3_Edge, Zone4_Edge, Zone5_Edge, Zone6_Edge, Zone7_Edge, Nominal_Z1, Nominal_Z2, Nominal_Z3, Nominal_Z4, Nominal_Z5, Nominal_Z6, Nominal_Z7, CADContact_Z1, CADContact_Z2, CADContact_Z3, CADContact_Z4, CADContact_Z5, CADContact_Z6, CADContact_Z7)
+
+#Calculating the ideal centralized contact placement location 
+
+Central_Z1 <- NULL
+Central_Z2 <- NULL
+Central_Z3 <- NULL
+Central_Z4 <- NULL
+Central_Z5 <- NULL
+Central_Z6 <- NULL
+Central_Z7 <- NULL
+Central_Z8 <- NULL
+
+for (i in 1:EndRow) {
+  if(first_2$ROIID[i] == 2) {
+    Central_Z1[i] <- Zone1_Width[i]/2
+  }
+  else if(first_2$ROIID[i] == 3) {
+    Central_Z2[i] <- Zone1_Edge[i-1] + Zone2_Width[i]/2
+  }
+  else if(first_2$ROIID[i] == 4) {
+    Central_Z3[i] <- Zone2_Edge[i-1] + Zone3_Width[i]/2
+  }
+  else if(first_2$ROIID[i] == 5) {
+    Central_Z4[i] <- Zone3_Edge[i-1] + Zone4_Width[i]/2
+  }
+  else if(first_2$ROIID[i] == 6) {
+    Central_Z5[i] <- Zone4_Edge[i-1] + Zone5_Width[i]/2
+  }
+  else if(first_2$ROIID[i] == 7) {
+    Central_Z6[i] <- Zone5_Edge[i-1] + Zone6_Width[i]/2
+  }
+  else if(first_2$ROIID[i] == 8) {
+    Central_Z7[i] <- Zone6_Edge[i-1] + Zone7_Width[i]/2
+  }
+  else if(first_2$ROIID[i] == 9) {
+    Central_Z8[i] <- Zone7_Edge[i-1] + Zone8_Width[i]/4
+  }
+  else {
+   Central_Z1[i] <- 0
+   Central_Z2[i] <- 0
+   Central_Z3[i] <- 0
+   Central_Z4[i] <- 0
+   Central_Z5[i] <- 0
+   Central_Z6[i] <- 0
+   Central_Z7[i] <- 0 
+   Central_Z8[i] <- 0 
+  }
+}
+
+first_2 <- cbind(first_2, Central_Z1, Central_Z2, Central_Z3, Central_Z4, Central_Z5, Central_Z6, Central_Z7, Central_Z8)
+
+
+#Calculating the Cum Error values 
+first_2$Zone1_CumError <- first_2$Zone1_Edge - first_2$Nominal_Z1
+first_2$Zone2_CumError <- first_2$Zone2_Edge - first_2$Nominal_Z2
+first_2$Zone3_CumError <- first_2$Zone3_Edge - first_2$Nominal_Z3
+first_2$Zone4_CumError <- first_2$Zone4_Edge - first_2$Nominal_Z4
+first_2$Zone5_CumError <- first_2$Zone5_Edge - first_2$Nominal_Z5
+first_2$Zone6_CumError <- first_2$Zone6_Edge - first_2$Nominal_Z6
+first_2$Zone7_CumError <- first_2$Zone7_Edge - first_2$Nominal_Z7
+
+
+#Setting all zero values to NA
+first_2$Zone1_CumError[first_2$Zone1_CumError ==0] <- NA
+first_2$Zone2_CumError[first_2$Zone2_CumError ==0] <- NA
+first_2$Zone3_CumError[first_2$Zone3_CumError ==0] <- NA
+first_2$Zone4_CumError[first_2$Zone4_CumError ==0] <- NA
+first_2$Zone5_CumError[first_2$Zone5_CumError ==0] <- NA
+first_2$Zone6_CumError[first_2$Zone6_CumError ==0] <- NA
+first_2$Zone7_CumError[first_2$Zone7_CumError ==0] <- NA
+
+#Setting all zero values to NA
+first_2$Zone1_Width[first_2$Zone1_Width ==0] <- NA
+first_2$Zone2_Width[first_2$Zone2_Width ==0] <- NA
+first_2$Zone3_Width[first_2$Zone3_Width ==0] <- NA
+first_2$Zone4_Width[first_2$Zone4_Width ==0] <- NA
+first_2$Zone5_Width[first_2$Zone5_Width ==0] <- NA
+first_2$Zone6_Width[first_2$Zone6_Width ==0] <- NA
+first_2$Zone7_Width[first_2$Zone7_Width ==0] <- NA
+
+
+#Setting all zero values to NA for the edges
+first_2$Zone1_Edge[first_2$Zone1_Edge ==0] <- NA
+first_2$Zone2_Edge[first_2$Zone2_Edge ==0] <- NA
+first_2$Zone3_Edge[first_2$Zone3_Edge ==0] <- NA
+first_2$Zone4_Edge[first_2$Zone4_Edge ==0] <- NA
+first_2$Zone5_Edge[first_2$Zone5_Edge ==0] <- NA
+first_2$Zone6_Edge[first_2$Zone6_Edge ==0] <- NA
+first_2$Zone7_Edge[first_2$Zone7_Edge ==0] <- NA
+
+
+
+#Setting all zero values to NA for the CADContacts
+first_2$CADContact_Z1[first_2$CADContact_Z1 ==0] <- NA
+first_2$CADContact_Z2[first_2$CADContact_Z2 ==0] <- NA
+first_2$CADContact_Z3[first_2$CADContact_Z3 ==0] <- NA
+first_2$CADContact_Z4[first_2$CADContact_Z4 ==0] <- NA
+first_2$CADContact_Z5[first_2$CADContact_Z5 ==0] <- NA
+first_2$CADContact_Z6[first_2$CADContact_Z6 ==0] <- NA
+first_2$CADContact_Z7[first_2$CADContact_Z7 ==0] <- NA
+
+
+#Scatter plot of the CD Widths
+library(xkcd)
+library(extrafont)
+
+z <- ggplot(data = first_2, aes( x= ROIID, y= Zone1_Width, color = lotid )) + geom_jitter(width= 0.5, height =0.5)
+
+z  + geom_jitter(width= 0.5, height =0.5) + geom_point (aes(y = Zone2_Width), size =3, position=position_jitterdodge(dodge.width=0.9)) +  scale_y_continuous(name = "Zone-XDirectional_Width(nm)", breaks = seq(50, 2400, 200), limits = c(50,2400)) + geom_point (aes(y =Zone1_Width), size=3, position=position_jitterdodge(dodge.width=0.9))+ geom_point (aes(y = Zone3_Width), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone4_Width), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone5_Width), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone6_Width), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone7_Width), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone8_Width), size =3, position=position_jitterdodge(dodge.width=0.9)) + ggtitle ("x-Direction CD Width (nm)")  +
+  theme(axis.line.x = element_line(size = 0.5, colour = "black"),
+        axis.line.y = element_line(size = 0.5, colour = "black"),
+        axis.line = element_line(size=1, colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        plot.title=element_text(size = 20, family="xkcd-Regular"),
+        text=element_text(size = 16, family="xkcd-Regular"),
+        axis.text.x=element_text(colour="black", size = 12, angle=90),
+        axis.text.y=element_text(colour="black", size = 12)) 
+
+
+#Scatter plot of Edges
+
+m <- ggplot(data = first_2, aes( x= ROIID, y= Zone1_Edge, color = lotid ), size = 3) + geom_jitter(width= 0.5, height =0.5)
+
+m  + geom_jitter(width= 0.5, height =0.5) + geom_point (aes(y = Zone2_Edge), size =3, position=position_jitterdodge(dodge.width=0.9)) +  scale_y_continuous(name = "X-Direction Edges(nm)", breaks = seq(0, 7000, 500), limits = c(0,7000)) + geom_point (aes(y =Zone3_Edge), size=3, position=position_jitterdodge(dodge.width=0.9))+ geom_point (aes(y = Zone4_Edge), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone5_Edge), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone6_Edge), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone7_Edge), size =3, position=position_jitterdodge(dodge.width=0.9)) + ggtitle ("x-Direction Edges(nm)")  +
+     geom_point (aes(y = CADContact_Z1), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = CADContact_Z2), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = CADContact_Z3), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = CADContact_Z4), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = CADContact_Z5), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = CADContact_Z6), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = CADContact_Z7), size =3, position=position_jitterdodge(dodge.width=0.9)) +
+    theme(axis.line.x = element_line(size = 0.5, colour = "black"),
+        axis.line.y = element_line(size = 0.5, colour = "black"),
+        axis.line = element_line(size=1, colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        plot.title=element_text(size = 20, family="xkcd-Regular"),
+        text=element_text(size = 16, family="xkcd-Regular"),
+        axis.text.x=element_text(colour="black", size = 12, angle=90),
+        axis.text.y=element_text(colour="black", size = 12)) 
+
+
+#Scatter plot of CumError
+
+y <- ggplot(data = first_2, aes( x= ROIID, y= Zone1_CumError, color = lotid ), size = 3) + geom_jitter(width= 0.5, height =0.5)
+
+y  + geom_jitter(width= 0.5, height =0.5) + geom_point (aes(y = Zone2_CumError), size =3, position=position_jitterdodge(dodge.width=0.9)) +  scale_y_continuous(name = "X-Direction CumError(nm)", breaks = seq(-600, 600, 100), limits = c(-600,600)) + geom_point (aes(y =Zone3_CumError), size=3, position=position_jitterdodge(dodge.width=0.9))+ geom_point (aes(y = Zone4_CumError), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone5_CumError), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone6_CumError), size =3, position=position_jitterdodge(dodge.width=0.9)) + geom_point (aes(y = Zone7_CumError), size =3, position=position_jitterdodge(dodge.width=0.9)) + ggtitle ("x-Direction CumError (nm)")  +
+  theme(axis.line.x = element_line(size = 0.5, colour = "black"),
+        axis.line.y = element_line(size = 0.5, colour = "black"),
+        axis.line = element_line(size=1, colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        plot.title=element_text(size = 20, family="xkcd-Regular"),
+        text=element_text(size = 16, family="xkcd-Regular"),
+        axis.text.x=element_text(colour="black", size = 12, angle=90),
+        axis.text.y=element_text(colour="black", size = 12)) 

@@ -1,0 +1,1948 @@
+Public Sub Taiwo()
+
+Dim lCol As Long
+Dim lRow As Long
+Dim j As Long
+Dim i As Long
+
+
+'Find the last non-blank cell in the first row
+'Find the last non-blank cell in the first row
+
+lRow = Cells(Rows.Count, 1).End(xlUp).Row
+lCol = Cells(1, Columns.Count).End(xlToLeft).Column
+ActiveSheet.Name = "B16Z_ContactPlacement"
+
+'Using RowNames to pull individual Parameters for Contact Placement Verification
+j = 0
+For i = 2 To lRow
+If Cells(i, 12).Value <> Cells(i - 1, 12).Value Then
+j = j + 1
+Cells(lRow + j, 1) = Cells(i, 12).Value
+End If
+zz = j
+Next i
+
+
+For y = 2 To j
+
+naming = Worksheets("B16Z_ContactPlacement").Cells(lRow + y, 1).Value
+Sheets.Add After:=Sheets(Sheets.Count)
+ActiveSheet.Name = naming
+
+'Header copy over to all the individual excel worksheets
+Worksheets("B16Z_ContactPlacement").Cells(1, 1).Copy Worksheets(naming).Cells(1, 1)
+Worksheets("B16Z_ContactPlacement").Cells(1, 4).Copy Worksheets(naming).Cells(1, 2)
+Worksheets("B16Z_ContactPlacement").Cells(1, 7).Copy Worksheets(naming).Cells(1, 3)
+Worksheets("B16Z_ContactPlacement").Cells(1, 10).Copy Worksheets(naming).Cells(1, 4)
+Worksheets("B16Z_ContactPlacement").Cells(1, 12).Copy Worksheets(naming).Cells(1, 5)
+Worksheets("B16Z_ContactPlacement").Cells(1, 13).Copy Worksheets(naming).Cells(1, 6)
+Worksheets("B16Z_ContactPlacement").Cells(1, 46).Copy Worksheets(naming).Cells(1, 7)
+Worksheets("B16Z_ContactPlacement").Cells(1, 48).Copy Worksheets(naming).Cells(1, 8)
+Worksheets("B16Z_ContactPlacement").Cells(1, 73).Copy Worksheets(naming).Cells(1, 9)
+Worksheets("B16Z_ContactPlacement").Cells(1, 99).Copy Worksheets(naming).Cells(1, 10)
+Worksheets("B16Z_ContactPlacement").Cells(1, 100).Copy Worksheets(naming).Cells(1, 11)
+Worksheets("B16Z_ContactPlacement").Cells(1, 71).Copy Worksheets(naming).Cells(1, 12)
+Worksheets("B16Z_ContactPlacement").Cells(1, 72).Copy Worksheets(naming).Cells(1, 13)
+Worksheets("B16Z_ContactPlacement").Cells(1, 16).Copy Worksheets(naming).Cells(1, 14)
+Worksheets("B16Z_ContactPlacement").Cells(1, 17).Copy Worksheets(naming).Cells(1, 15)
+
+
+
+
+
+
+'Taking Values from the Master Excel Worksheet and Populating the New Excel Worksheet
+b = 2
+For a = 2 To lRow
+If Worksheets("B16Z_ContactPlacement").Cells(a, 12).Value <> "" Then
+If Worksheets("B16Z_ContactPlacement").Cells(a, 12).Value = naming Then
+
+'Values copy over to all the individual excel worksheets
+
+Worksheets("B16Z_ContactPlacement").Cells(a, 1).Copy Worksheets(naming).Cells(b, 1)
+Worksheets("B16Z_ContactPlacement").Cells(a, 4).Copy Worksheets(naming).Cells(b, 2)
+Worksheets("B16Z_ContactPlacement").Cells(a, 7).Copy Worksheets(naming).Cells(b, 3)
+Worksheets("B16Z_ContactPlacement").Cells(a, 10).Copy Worksheets(naming).Cells(b, 4)
+Worksheets("B16Z_ContactPlacement").Cells(a, 12).Copy Worksheets(naming).Cells(b, 5)
+Worksheets("B16Z_ContactPlacement").Cells(a, 13).Copy Worksheets(naming).Cells(b, 6)
+Worksheets("B16Z_ContactPlacement").Cells(a, 46).Copy Worksheets(naming).Cells(b, 7)
+Worksheets("B16Z_ContactPlacement").Cells(a, 48).Copy Worksheets(naming).Cells(b, 8)
+Worksheets("B16Z_ContactPlacement").Cells(a, 73).Copy Worksheets(naming).Cells(b, 9)
+Worksheets("B16Z_ContactPlacement").Cells(a, 99).Copy Worksheets(naming).Cells(b, 10)
+Worksheets("B16Z_ContactPlacement").Cells(a, 100).Copy Worksheets(naming).Cells(b, 11)
+Worksheets("B16Z_ContactPlacement").Cells(a, 71).Copy Worksheets(naming).Cells(b, 12)
+Worksheets("B16Z_ContactPlacement").Cells(a, 72).Copy Worksheets(naming).Cells(b, 13)
+Worksheets("B16Z_ContactPlacement").Cells(a, 16).Copy Worksheets(naming).Cells(b, 14)
+Worksheets("B16Z_ContactPlacement").Cells(a, 17).Copy Worksheets(naming).Cells(b, 15)
+
+
+
+b = b + 1
+End If
+End If
+
+Next a
+
+
+Next y
+
+
+'Calculating the WRT SGS Contact Placement
+Sheets("B16Z_58ACI_1PB_BSCSGS").Select
+Dim c As Long
+Dim d As Long
+d = Cells(Rows.Count, 1).End(xlUp).Row
+
+
+For c = 2 To d
+If Cells(c, 10).Value = "8" And Cells(c, 11) = "2" Then
+Cells(c, 16).Value = "Z1"
+
+ElseIf Cells(c, 10).Value = "7" And Cells(c, 11) = "2" Then
+Cells(c, 16).Value = "Z2"
+
+ElseIf Cells(c, 10).Value = "6" And Cells(c, 11) = "2" Then
+Cells(c, 16).Value = "Z3"
+
+ElseIf Cells(c, 10).Value = "5" And Cells(c, 11) = "2" Then
+Cells(c, 16).Value = "Z4"
+
+
+ElseIf Cells(c, 10).Value = "4" And Cells(c, 11) = "2" Then
+Cells(c, 16).Value = "Z5"
+
+ElseIf Cells(c, 10).Value = "3" And Cells(c, 11) = "2" Then
+Cells(c, 16).Value = "Z6"
+
+
+ElseIf Cells(c, 10).Value = "2" And Cells(c, 11) = "2" Then
+Cells(c, 16).Value = "Z7"
+
+ElseIf Cells(c, 10).Value = "1" And Cells(c, 11) = "2" Then
+Cells(c, 16).Value = "Z8"
+
+End If
+
+Next c
+
+
+'Recalculating the actual WRT26 Widths
+Dim w As Integer
+Dim Y10, Y24, Y19, Y53, Y123, Y1114, Y616, Y127, Y146, Y817, Y717, Y162 As Long
+
+
+For w = 2 To c
+
+If Cells(w, 6).Value = "1,2" Then
+
+If Cells(w, 14).Value = "1" And Cells(w, 15).Value = "0" Then
+Y10 = Cells(w, 13).Value
+
+ElseIf Cells(w, 14).Value = "2" And Cells(w, 15).Value = "-4" Then
+Y24 = Cells(w, 13).Value
+
+ElseIf Cells(w, 14).Value = "-1" And Cells(w, 15).Value = "9" Then
+Y19 = Cells(w, 13).Value
+
+ElseIf Cells(w, 14).Value = "-5" And Cells(w, 15).Value = "-3" Then
+Y53 = Cells(w, 13).Value
+
+ElseIf Cells(w, 14).Value = "12" And Cells(w, 15).Value = "3" Then
+Y123 = Cells(w, 13).Value
+
+
+ElseIf Cells(w, 14).Value = "11" And Cells(w, 15).Value = "14" Then
+Y1114 = Cells(w, 13).Value
+
+
+ElseIf Cells(w, 14).Value = "-6" And Cells(w, 15).Value = "16" Then
+Y616 = Cells(w, 13).Value
+
+ElseIf Cells(w, 14).Value = "-12" And Cells(w, 15).Value = "-7" Then
+Y127 = Cells(w, 13).Value
+
+
+ElseIf Cells(w, 14).Value = "14" And Cells(w, 15).Value = "-6" Then
+Y146 = Cells(w, 13).Value
+
+
+
+ElseIf Cells(w, 14).Value = "8" And Cells(w, 15).Value = "-17" Then
+Y817 = Cells(w, 13).Value
+
+ElseIf Cells(w, 14).Value = "-7" And Cells(w, 15).Value = "-17" Then
+Y717 = Cells(w, 13).Value
+
+
+
+ElseIf Cells(w, 14).Value = "-16" And Cells(w, 15).Value = "2" Then
+Y162 = Cells(w, 13).Value
+
+End If
+
+End If
+
+Next w
+
+
+'Getting Values copied over to properly calculate the WRT SGD
+
+For w = 2 To c
+If Cells(w, 6).Value = "1,1" Then
+
+
+If Cells(w, 14).Value = "1" And Cells(w, 15).Value = "0" Then
+Cells(w, 17).Value = Y10
+
+ElseIf Cells(w, 14).Value = "2" And Cells(w, 15).Value = "-4" Then
+Cells(w, 17).Value = Y24
+
+ElseIf Cells(w, 14).Value = "-1" And Cells(w, 15).Value = "9" Then
+Cells(w, 17).Value = Y19
+
+ElseIf Cells(w, 14).Value = "-5" And Cells(w, 15).Value = "-3" Then
+Cells(w, 17).Value = Y53
+
+ElseIf Cells(w, 14).Value = "12" And Cells(w, 15).Value = "3" Then
+Cells(w, 17).Value = Y123
+
+
+ElseIf Cells(w, 14).Value = "11" And Cells(w, 15).Value = "14" Then
+Cells(w, 17).Value = Y1114
+
+
+ElseIf Cells(w, 14).Value = "-6" And Cells(w, 15).Value = "16" Then
+Cells(w, 17).Value = Y616
+
+ElseIf Cells(w, 14).Value = "-12" And Cells(w, 15).Value = "-7" Then
+Cells(w, 17).Value = Y127
+
+
+ElseIf Cells(w, 14).Value = "14" And Cells(w, 15).Value = "-6" Then
+Cells(w, 17).Value = Y146
+
+
+
+ElseIf Cells(w, 14).Value = "8" And Cells(w, 15).Value = "-17" Then
+Cells(w, 17).Value = Y817
+
+ElseIf Cells(w, 14).Value = "-7" And Cells(w, 15).Value = "-17" Then
+Cells(w, 17).Value = Y717
+
+
+
+ElseIf Cells(w, 14).Value = "-16" And Cells(w, 15).Value = "2" Then
+Cells(w, 17).Value = Y162
+
+End If
+
+End If
+Next w
+
+
+
+'Calculating Median Values for WRT SGS Contact
+
+Range("K866").Value = "ZONE1"
+Range("L866").Value = "ZONE2"
+Range("M866").Value = "ZONE3"
+Range("N866").Value = "ZONE4"
+Range("O866").Value = "ZONE5"
+Range("P866").Value = "ZONE6"
+Range("Q866").Value = "ZONE7"
+Range("R866").Value = "ZONE8"
+Range("J880").Value = "Median"
+Range("J881").Value = "Minimum"
+Range("J882").Value = "Stand. Deviation"
+
+Dim p As Long
+
+p = 867
+For i = 2 To c
+If Cells(i, 16).Value = "Z1" Then
+Cells(p, 11).Value = (Cells(i, 9) - Cells(i, 17)) * 10
+p = p + 1
+End If
+Next i
+
+
+p = 867
+For i = 2 To c
+If Cells(i, 16).Value = "Z2" Then
+Cells(p, 12).Value = (Cells(i, 9) - Cells(i, 17)) * 10
+p = p + 1
+End If
+Next i
+
+
+p = 867
+For i = 2 To c
+If Cells(i, 16).Value = "Z3" Then
+Cells(p, 13).Value = (Cells(i, 9) - Cells(i, 17)) * 10
+p = p + 1
+End If
+Next i
+
+
+p = 867
+For i = 2 To c
+If Cells(i, 16).Value = "Z4" Then
+Cells(p, 14).Value = (Cells(i, 9) - Cells(i, 17)) * 10
+p = p + 1
+End If
+Next i
+
+
+p = 867
+For i = 2 To c
+If Cells(i, 16).Value = "Z5" Then
+Cells(p, 15).Value = (Cells(i, 9) - Cells(i, 17)) * 10
+p = p + 1
+End If
+Next i
+
+
+p = 867
+For i = 2 To c
+If Cells(i, 16).Value = "Z6" Then
+Cells(p, 16).Value = (Cells(i, 9) - Cells(i, 17)) * 10
+p = p + 1
+End If
+Next i
+
+
+p = 867
+For i = 2 To c
+If Cells(i, 16).Value = "Z7" Then
+Cells(p, 17).Value = (Cells(i, 9) - Cells(i, 17)) * 10
+p = p + 1
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To c
+If Cells(i, 16).Value = "Z8" Then
+Cells(p, 18).Value = (Cells(i, 9) - Cells(i, 17)) * 10
+p = p + 1
+End If
+Next i
+
+Dim Median_Range As Range
+Dim Med As Double
+Dim Min As Double
+Dim sta As Double
+Dim r As Integer
+
+
+For r = 11 To 18
+Set Median_Range = Range(Cells(867, r), Cells(878, r))
+Med = Application.WorksheetFunction.Median(Median_Range)
+Min = Application.WorksheetFunction.Min(Median_Range)
+sta = Application.WorksheetFunction.StDev(Median_Range)
+Cells(880, r).Value = Med
+Cells(881, r).Value = Min
+Cells(882, r).Value = sta
+Next r
+
+'Calculating the Tier-2-Tier Values
+Sheets("B16Z_58ACI_1PB_BSCV2").Select
+Dim l As Long
+
+l = Cells(Rows.Count, 1).End(xlUp).Row
+Range("A1:Z" & l).Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    Sheets.Add After:=Sheets(Sheets.Count)
+    ActiveSheet.Paste
+    ActiveSheet.Name = "1,2"
+    Columns("F:F").Select
+    Selection.AutoFilter
+    ActiveSheet.Range("$F$1:$F$" & l).AutoFilter Field:=1, Criteria1:="1,2"
+    
+
+
+    Sheets.Add After:=Sheets(Sheets.Count)
+    ActiveSheet.Name = "2,3"
+    Sheets("B16Z_58ACI_1PB_BSCV2").Select
+    Range("A1:J" & l).Select
+    Selection.Copy
+    Sheets("2,3").Select
+    ActiveSheet.Paste
+    Columns("F:F").Select
+    Selection.AutoFilter
+    ActiveSheet.Range("$F$1:$F$" & l).AutoFilter Field:=1, Criteria1:="2,3"
+
+
+    Sheets.Add After:=Sheets(Sheets.Count)
+    ActiveSheet.Name = "3,4"
+    Sheets("B16Z_58ACI_1PB_BSCV2").Select
+    Range("A1:J" & l).Select
+    Selection.Copy
+    Sheets("3,4").Select
+    ActiveSheet.Paste
+    Columns("F:F").Select
+    Selection.AutoFilter
+    ActiveSheet.Range("$F$1:$F$" & l).AutoFilter Field:=1, Criteria1:="3,4"
+
+
+    Sheets.Add After:=Sheets(Sheets.Count)
+    ActiveSheet.Name = "4,5"
+    Sheets("B16Z_58ACI_1PB_BSCV2").Select
+    Range("A1:J" & l).Select
+    Selection.Copy
+    Sheets("4,5").Select
+    ActiveSheet.Paste
+    Columns("F:F").Select
+    Selection.AutoFilter
+    ActiveSheet.Range("$F$1:$F$" & l).AutoFilter Field:=1, Criteria1:="4,5"
+
+
+
+
+    Sheets.Add After:=Sheets(Sheets.Count)
+    ActiveSheet.Name = "5,6"
+    Sheets("B16Z_58ACI_1PB_BSCV2").Select
+    Range("A1:J" & l).Select
+    Selection.Copy
+    Sheets("5,6").Select
+    ActiveSheet.Paste
+    Columns("F:F").Select
+    Selection.AutoFilter
+    ActiveSheet.Range("$F$1:$F$" & l).AutoFilter Field:=1, Criteria1:="5,6"
+
+
+
+    Sheets.Add After:=Sheets(Sheets.Count)
+    ActiveSheet.Name = "6,7"
+    Sheets("B16Z_58ACI_1PB_BSCV2").Select
+    Range("A1:J" & l).Select
+    Selection.Copy
+    Sheets("6,7").Select
+    ActiveSheet.Paste
+    Columns("F:F").Select
+    Selection.AutoFilter
+    ActiveSheet.Range("$F$1:$F$" & l).AutoFilter Field:=1, Criteria1:="6,7"
+ 
+  
+    Sheets.Add After:=Sheets(Sheets.Count)
+    ActiveSheet.Name = "7,8"
+    Sheets("B16Z_58ACI_1PB_BSCV2").Select
+    Range("A1:J" & l).Select
+    Selection.Copy
+    Sheets("7,8").Select
+    ActiveSheet.Paste
+    Columns("F:F").Select
+    Selection.AutoFilter
+    ActiveSheet.Range("$F$1:$F$" & l).AutoFilter Field:=1, Criteria1:="7,8"
+
+
+
+    Sheets.Add After:=Sheets(Sheets.Count)
+    ActiveSheet.Name = "8,9"
+    Sheets("B16Z_58ACI_1PB_BSCV2").Select
+    Range("A1:J" & l).Select
+    Selection.Copy
+    Sheets("8,9").Select
+    ActiveSheet.Paste
+    Columns("F:F").Select
+    Selection.AutoFilter
+    ActiveSheet.Range("$F$1:$F$" & l).AutoFilter Field:=1, Criteria1:="8,9"
+
+
+
+    Sheets.Add After:=Sheets(Sheets.Count)
+    ActiveSheet.Name = "9,10"
+    Sheets("B16Z_58ACI_1PB_BSCV2").Select
+    Range("A1:J" & l).Select
+    Selection.Copy
+    Sheets("9,10").Select
+    ActiveSheet.Paste
+    Columns("F:F").Select
+    Selection.AutoFilter
+    ActiveSheet.Range("$F$1:$F$" & l).AutoFilter Field:=1, Criteria1:="9,10"
+
+
+    Sheets.Add After:=Sheets(Sheets.Count)
+    ActiveSheet.Name = "Contact_Placement"
+    
+    
+ Call Median_StdDev
+ Call Contact_Placement
+
+End Sub
+
+
+Public Sub Median_StdDev()
+
+
+'Caculating Median Values for 2,3
+
+
+Sheets("2,3").Select
+Range("K866").Value = "ZONE1"
+Range("L866").Value = "ZONE2"
+Range("M866").Value = "ZONE3"
+Range("N866").Value = "ZONE4"
+Range("O866").Value = "ZONE5"
+Range("P866").Value = "ZONE6"
+Range("Q866").Value = "ZONE7"
+Range("R866").Value = "ZONE8"
+Range("J880").Value = "Median"
+Range("J881").Value = "Minimum"
+Range("J882").Value = "Stand. Deviation"
+
+b = Cells(Rows.Count, 1).End(xlUp).Row
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "1" Then
+If Cells(i, 6).Value = "2,3" Then
+Cells(p, 11).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "2" Then
+If Cells(i, 6).Value = "2,3" Then
+Cells(p, 12).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "3" Then
+If Cells(i, 6).Value = "2,3" Then
+Cells(p, 13).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "4" Then
+If Cells(i, 6).Value = "2,3" Then
+Cells(p, 14).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "5" Then
+If Cells(i, 6).Value = "2,3" Then
+Cells(p, 15).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "6" Then
+If Cells(i, 6).Value = "2,3" Then
+Cells(p, 16).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "7" Then
+If Cells(i, 6).Value = "2,3" Then
+Cells(p, 17).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "8" Then
+If Cells(i, 6).Value = "2,3" Then
+Cells(p, 18).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+'Only 6 parameters available
+
+For r = 11 To 18
+Set Median_Range = Range(Cells(867, r), Cells(878, r))
+Med = Application.WorksheetFunction.Median(Median_Range)
+Min = Application.WorksheetFunction.Min(Median_Range)
+sta = Application.WorksheetFunction.StDev(Median_Range)
+Cells(880, r).Value = Med
+Cells(881, r).Value = Min
+Cells(882, r).Value = sta
+Next r
+
+
+
+'Calculating Median values for 3,4
+Sheets("3,4").Select
+Range("K866").Value = "ZONE1"
+Range("L866").Value = "ZONE2"
+Range("M866").Value = "ZONE3"
+Range("N866").Value = "ZONE4"
+Range("O866").Value = "ZONE5"
+Range("P866").Value = "ZONE6"
+Range("Q866").Value = "ZONE7"
+Range("R866").Value = "ZONE8"
+Range("J880").Value = "Median"
+Range("J881").Value = "Minimum"
+Range("J882").Value = "Stand. Deviation"
+
+
+b = Cells(Rows.Count, 1).End(xlUp).Row
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "3" Then
+If Cells(i, 6).Value = "3,4" Then
+Cells(p, 13).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "1" Then
+If Cells(i, 6).Value = "3,4" Then
+Cells(p, 11).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "2" Then
+If Cells(i, 6).Value = "3,4" Then
+Cells(p, 12).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "4" Then
+If Cells(i, 6).Value = "3,4" Then
+Cells(p, 14).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "5" Then
+If Cells(i, 6).Value = "3,4" Then
+Cells(p, 15).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "6" Then
+If Cells(i, 6).Value = "3,4" Then
+Cells(p, 16).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "7" Then
+If Cells(i, 6).Value = "3,4" Then
+Cells(p, 17).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "8" Then
+If Cells(i, 6).Value = "3,4" Then
+Cells(p, 18).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+'Only 6 parameters available
+For r = 11 To 18
+Set Median_Range = Range(Cells(867, r), Cells(878, r))
+Med = Application.WorksheetFunction.Median(Median_Range)
+Min = Application.WorksheetFunction.Min(Median_Range)
+sta = Application.WorksheetFunction.StDev(Median_Range)
+Cells(880, r).Value = Med
+Cells(881, r).Value = Min
+Cells(882, r).Value = sta
+Next r
+
+
+
+
+'Calculating mean Values for 4,5
+Sheets("4,5").Select
+Range("K866").Value = "ZONE1"
+Range("L866").Value = "ZONE2"
+Range("M866").Value = "ZONE3"
+Range("N866").Value = "ZONE4"
+Range("O866").Value = "ZONE5"
+Range("P866").Value = "ZONE6"
+Range("Q866").Value = "ZONE7"
+Range("R866").Value = "ZONE8"
+Range("J880").Value = "Median"
+Range("J881").Value = "Minimum"
+Range("J882").Value = "Stand. Deviation"
+
+b = Cells(Rows.Count, 1).End(xlUp).Row
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "3" Then
+If Cells(i, 6).Value = "4,5" Then
+Cells(p, 13).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "1" Then
+If Cells(i, 6).Value = "4,5" Then
+Cells(p, 11).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "2" Then
+If Cells(i, 6).Value = "4,5" Then
+Cells(p, 12).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "4" Then
+If Cells(i, 6).Value = "4,5" Then
+Cells(p, 14).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "5" Then
+If Cells(i, 6).Value = "4,5" Then
+Cells(p, 15).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "6" Then
+If Cells(i, 6).Value = "4,5" Then
+Cells(p, 16).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "7" Then
+If Cells(i, 6).Value = "4,5" Then
+Cells(p, 17).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "8" Then
+If Cells(i, 6).Value = "4,5" Then
+Cells(p, 18).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+'Only 6 parameters available
+For r = 11 To 18
+Set Median_Range = Range(Cells(867, r), Cells(878, r))
+Med = Application.WorksheetFunction.Median(Median_Range)
+Min = Application.WorksheetFunction.Min(Median_Range)
+sta = Application.WorksheetFunction.StDev(Median_Range)
+Cells(880, r).Value = Med
+Cells(881, r).Value = Min
+Cells(882, r).Value = sta
+Next r
+
+
+
+
+'Calculating mean Values for 5,6
+
+Sheets("5,6").Select
+Range("K866").Value = "ZONE1"
+Range("L866").Value = "ZONE2"
+Range("M866").Value = "ZONE3"
+Range("N866").Value = "ZONE4"
+Range("O866").Value = "ZONE5"
+Range("P866").Value = "ZONE6"
+Range("Q866").Value = "ZONE7"
+Range("R866").Value = "ZONE8"
+Range("J880").Value = "Median"
+Range("J881").Value = "Minimum"
+Range("J882").Value = "Stand. Deviation"
+
+b = Cells(Rows.Count, 1).End(xlUp).Row
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "3" Then
+If Cells(i, 6).Value = "5,6" Then
+Cells(p, 13).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "1" Then
+If Cells(i, 6).Value = "5,6" Then
+Cells(p, 11).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "2" Then
+If Cells(i, 6).Value = "5,6" Then
+Cells(p, 12).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "4" Then
+If Cells(i, 6).Value = "5,6" Then
+Cells(p, 14).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "5" Then
+If Cells(i, 6).Value = "5,6" Then
+Cells(p, 15).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "6" Then
+If Cells(i, 6).Value = "5,6" Then
+Cells(p, 16).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "7" Then
+If Cells(i, 6).Value = "5,6" Then
+Cells(p, 17).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "8" Then
+If Cells(i, 6).Value = "5,6" Then
+Cells(p, 18).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+'Only 6 parameters available
+For r = 11 To 18
+Set Median_Range = Range(Cells(867, r), Cells(878, r))
+Med = Application.WorksheetFunction.Median(Median_Range)
+Min = Application.WorksheetFunction.Min(Median_Range)
+sta = Application.WorksheetFunction.StDev(Median_Range)
+Cells(880, r).Value = Med
+Cells(881, r).Value = Min
+Cells(882, r).Value = sta
+Next r
+
+
+
+
+'Calculating mean values for 6,7
+
+
+Sheets("6,7").Select
+Range("K866").Value = "ZONE1"
+Range("L866").Value = "ZONE2"
+Range("M866").Value = "ZONE3"
+Range("N866").Value = "ZONE4"
+Range("O866").Value = "ZONE5"
+Range("P866").Value = "ZONE6"
+Range("Q866").Value = "ZONE7"
+Range("R866").Value = "ZONE8"
+Range("J880").Value = "Median"
+Range("J881").Value = "Minimum"
+Range("J882").Value = "Stand. Deviation"
+
+b = Cells(Rows.Count, 1).End(xlUp).Row
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "3" Then
+If Cells(i, 6).Value = "6,7" Then
+Cells(p, 13).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "1" Then
+If Cells(i, 6).Value = "6,7" Then
+Cells(p, 11).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "2" Then
+If Cells(i, 6).Value = "6,7" Then
+Cells(p, 12).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "4" Then
+If Cells(i, 6).Value = "6,7" Then
+Cells(p, 14).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "5" Then
+If Cells(i, 6).Value = "6,7" Then
+Cells(p, 15).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "6" Then
+If Cells(i, 6).Value = "6,7" Then
+Cells(p, 16).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "7" Then
+If Cells(i, 6).Value = "6,7" Then
+Cells(p, 17).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "8" Then
+If Cells(i, 6).Value = "6,7" Then
+Cells(p, 18).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+'Only 6 parameters available
+For r = 11 To 18
+Set Median_Range = Range(Cells(867, r), Cells(878, r))
+Med = Application.WorksheetFunction.Median(Median_Range)
+Min = Application.WorksheetFunction.Min(Median_Range)
+sta = Application.WorksheetFunction.StDev(Median_Range)
+Cells(880, r).Value = Med
+Cells(881, r).Value = Min
+Cells(882, r).Value = sta
+Next r
+
+
+
+
+'Calculating mean values for 7,8
+
+Sheets("7,8").Select
+Range("K866").Value = "ZONE1"
+Range("L866").Value = "ZONE2"
+Range("M866").Value = "ZONE3"
+Range("N866").Value = "ZONE4"
+Range("O866").Value = "ZONE5"
+Range("P866").Value = "ZONE6"
+Range("Q866").Value = "ZONE7"
+Range("R866").Value = "ZONE8"
+Range("J880").Value = "Median"
+Range("J881").Value = "Minimum"
+Range("J882").Value = "Stand. Deviation"
+
+b = Cells(Rows.Count, 1).End(xlUp).Row
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "3" Then
+If Cells(i, 6).Value = "7,8" Then
+Cells(p, 13).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "1" Then
+If Cells(i, 6).Value = "7,8" Then
+Cells(p, 11).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "2" Then
+If Cells(i, 6).Value = "7,8" Then
+Cells(p, 12).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "4" Then
+If Cells(i, 6).Value = "7,8" Then
+Cells(p, 14).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "5" Then
+If Cells(i, 6).Value = "7,8" Then
+Cells(p, 15).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "6" Then
+If Cells(i, 6).Value = "7,8" Then
+Cells(p, 16).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "7" Then
+If Cells(i, 6).Value = "7,8" Then
+Cells(p, 17).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "8" Then
+If Cells(i, 6).Value = "7,8" Then
+Cells(p, 18).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+'Only 6 parameters available
+For r = 11 To 18
+Set Median_Range = Range(Cells(867, r), Cells(878, r))
+Med = Application.WorksheetFunction.Median(Median_Range)
+Min = Application.WorksheetFunction.Min(Median_Range)
+sta = Application.WorksheetFunction.StDev(Median_Range)
+Cells(880, r).Value = Med
+Cells(881, r).Value = Min
+Cells(882, r).Value = sta
+Next r
+
+
+
+'Calculating mean values for 8,9
+
+
+Sheets("8,9").Select
+Range("K866").Value = "ZONE1"
+Range("L866").Value = "ZONE2"
+Range("M866").Value = "ZONE3"
+Range("N866").Value = "ZONE4"
+Range("O866").Value = "ZONE5"
+Range("P866").Value = "ZONE6"
+Range("Q866").Value = "ZONE7"
+Range("R866").Value = "ZONE8"
+Range("J880").Value = "Median"
+Range("J881").Value = "Minimum"
+Range("J882").Value = "Stand. Deviation"
+
+b = Cells(Rows.Count, 1).End(xlUp).Row
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "3" Then
+If Cells(i, 6).Value = "8,9" Then
+Cells(p, 13).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "1" Then
+If Cells(i, 6).Value = "8,9" Then
+Cells(p, 11).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "2" Then
+If Cells(i, 6).Value = "8,9" Then
+Cells(p, 12).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "4" Then
+If Cells(i, 6).Value = "8,9" Then
+Cells(p, 14).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "5" Then
+If Cells(i, 6).Value = "8,9" Then
+Cells(p, 15).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "6" Then
+If Cells(i, 6).Value = "8,9" Then
+Cells(p, 16).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "7" Then
+If Cells(i, 6).Value = "8,9" Then
+Cells(p, 17).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "8" Then
+If Cells(i, 6).Value = "8,9" Then
+Cells(p, 18).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+'Only 6 parameters available
+For r = 11 To 18
+Set Median_Range = Range(Cells(867, r), Cells(878, r))
+Med = Application.WorksheetFunction.Median(Median_Range)
+Min = Application.WorksheetFunction.Min(Median_Range)
+sta = Application.WorksheetFunction.StDev(Median_Range)
+Cells(880, r).Value = Med
+Cells(881, r).Value = Min
+Cells(882, r).Value = sta
+Next r
+
+
+'Calculating mean values for 9,10
+
+
+Sheets("9,10").Select
+Range("K866").Value = "ZONE1"
+Range("L866").Value = "ZONE2"
+Range("M866").Value = "ZONE3"
+Range("N866").Value = "ZONE4"
+Range("O866").Value = "ZONE5"
+Range("P866").Value = "ZONE6"
+Range("Q866").Value = "ZONE7"
+Range("R866").Value = "ZONE8"
+Range("J880").Value = "Median"
+Range("J881").Value = "Minimum"
+Range("J882").Value = "Stand. Deviation"
+
+b = Cells(Rows.Count, 1).End(xlUp).Row
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "3" Then
+If Cells(i, 6).Value = "9,10" Then
+Cells(p, 13).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "1" Then
+If Cells(i, 6).Value = "9,10" Then
+Cells(p, 11).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "2" Then
+If Cells(i, 6).Value = "9,10" Then
+Cells(p, 12).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "4" Then
+If Cells(i, 6).Value = "9,10" Then
+Cells(p, 14).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "5" Then
+If Cells(i, 6).Value = "9,10" Then
+Cells(p, 15).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "6" Then
+If Cells(i, 6).Value = "9,10" Then
+Cells(p, 16).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "7" Then
+If Cells(i, 6).Value = "9,10" Then
+Cells(p, 17).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+
+
+p = 867
+For i = 2 To b
+If Cells(i, 10).Value = "8" Then
+If Cells(i, 6).Value = "9,10" Then
+Cells(p, 18).Value = Cells(i, 7)
+p = p + 1
+End If
+End If
+Next i
+
+
+'Only 6 parameters available
+For r = 11 To 18
+Set Median_Range = Range(Cells(867, r), Cells(878, r))
+Med = Application.WorksheetFunction.Median(Median_Range)
+Min = Application.WorksheetFunction.Min(Median_Range)
+sta = Application.WorksheetFunction.StDev(Median_Range)
+Cells(880, r).Value = Med
+Cells(881, r).Value = Min
+Cells(882, r).Value = sta
+Next r
+
+
+
+
+End Sub
+
+Public Sub Contact_Placement()
+
+Sheets("Contact_Placement").Select
+Range("A1").Value = "Stair"
+Range("A2").Value = "Stair08"
+Range("A3").Value = "Stair07"
+Range("A4").Value = "Stair06"
+Range("A5").Value = "Stair05"
+Range("A6").Value = "Stair04"
+Range("A7").Value = "Stair03"
+Range("A8").Value = "Stair02"
+Range("A9").Value = "Stair01"
+Range("A10").Value = "Stair00"
+
+
+
+Range("B1").Value = "Z1"
+Range("C1").Value = "Z2"
+Range("D1").Value = "Z3"
+Range("E1").Value = "Z4"
+Range("F1").Value = "Z5"
+Range("G1").Value = "Z6"
+Range("H1").Value = "Z7"
+Range("I1").Value = "Z8"
+
+
+'Stair00
+Worksheets("B16Z_58ACI_1PB_BSCSGS").Range("K880").Copy Worksheets("Contact_Placement").Range("B10")
+Worksheets("B16Z_58ACI_1PB_BSCSGS").Range("L880").Copy Worksheets("Contact_Placement").Range("C10")
+Worksheets("B16Z_58ACI_1PB_BSCSGS").Range("M880").Copy Worksheets("Contact_Placement").Range("D10")
+Worksheets("B16Z_58ACI_1PB_BSCSGS").Range("N880").Copy Worksheets("Contact_Placement").Range("E10")
+Worksheets("B16Z_58ACI_1PB_BSCSGS").Range("O880").Copy Worksheets("Contact_Placement").Range("F10")
+Worksheets("B16Z_58ACI_1PB_BSCSGS").Range("P880").Copy Worksheets("Contact_Placement").Range("G10")
+Worksheets("B16Z_58ACI_1PB_BSCSGS").Range("Q880").Copy Worksheets("Contact_Placement").Range("H10")
+Worksheets("B16Z_58ACI_1PB_BSCSGS").Range("R880").Copy Worksheets("Contact_Placement").Range("I10")
+'Stair01
+Worksheets("2,3").Range("K880").Copy Worksheets("Contact_Placement").Range("B9")
+Worksheets("2,3").Range("L880").Copy Worksheets("Contact_Placement").Range("C9")
+Worksheets("2,3").Range("M880").Copy Worksheets("Contact_Placement").Range("D9")
+Worksheets("2,3").Range("N880").Copy Worksheets("Contact_Placement").Range("E9")
+Worksheets("2,3").Range("O880").Copy Worksheets("Contact_Placement").Range("F9")
+Worksheets("2,3").Range("P880").Copy Worksheets("Contact_Placement").Range("G9")
+Worksheets("2,3").Range("Q880").Copy Worksheets("Contact_Placement").Range("H9")
+Worksheets("2,3").Range("R880").Copy Worksheets("Contact_Placement").Range("I9")
+'Stair02
+Worksheets("3,4" & y).Range("K880").Copy Worksheets("Contact_Placement").Range("B8")
+Worksheets("3,4" & y).Range("L880").Copy Worksheets("Contact_Placement").Range("C8")
+Worksheets("3,4" & y).Range("M880").Copy Worksheets("Contact_Placement").Range("D8")
+Worksheets("3,4" & y).Range("N880").Copy Worksheets("Contact_Placement").Range("E8")
+Worksheets("3,4" & y).Range("O880").Copy Worksheets("Contact_Placement").Range("F8")
+Worksheets("3,4" & y).Range("P880").Copy Worksheets("Contact_Placement").Range("G8")
+Worksheets("3,4" & y).Range("Q880").Copy Worksheets("Contact_Placement").Range("H8")
+Worksheets("3,4" & y).Range("R880").Copy Worksheets("Contact_Placement").Range("I8")
+'Stair03
+Worksheets("4,5" & y).Range("K880").Copy Worksheets("Contact_Placement").Range("B7")
+Worksheets("4,5" & y).Range("L880").Copy Worksheets("Contact_Placement").Range("C7")
+Worksheets("4,5" & y).Range("M880").Copy Worksheets("Contact_Placement").Range("D7")
+Worksheets("4,5" & y).Range("N880").Copy Worksheets("Contact_Placement").Range("E7")
+Worksheets("4,5" & y).Range("O880").Copy Worksheets("Contact_Placement").Range("F7")
+Worksheets("4,5" & y).Range("P880").Copy Worksheets("Contact_Placement").Range("G7")
+Worksheets("4,5" & y).Range("Q880").Copy Worksheets("Contact_Placement").Range("H7")
+Worksheets("4,5" & y).Range("R880").Copy Worksheets("Contact_Placement").Range("I7")
+'Stair04
+Worksheets("5,6" & y).Range("K880").Copy Worksheets("Contact_Placement").Range("B6")
+Worksheets("5,6" & y).Range("L880").Copy Worksheets("Contact_Placement").Range("C6")
+Worksheets("5,6" & y).Range("M880").Copy Worksheets("Contact_Placement").Range("D6")
+Worksheets("5,6" & y).Range("N880").Copy Worksheets("Contact_Placement").Range("E6")
+Worksheets("5,6" & y).Range("O880").Copy Worksheets("Contact_Placement").Range("F6")
+Worksheets("5,6" & y).Range("P880").Copy Worksheets("Contact_Placement").Range("G6")
+Worksheets("5,6" & y).Range("Q880").Copy Worksheets("Contact_Placement").Range("H6")
+Worksheets("5,6" & y).Range("R880").Copy Worksheets("Contact_Placement").Range("I6")
+'Stair05
+Worksheets("6,7" & y).Range("K880").Copy Worksheets("Contact_Placement").Range("B5")
+Worksheets("6,7" & y).Range("L880").Copy Worksheets("Contact_Placement").Range("C5")
+Worksheets("6,7" & y).Range("M880").Copy Worksheets("Contact_Placement").Range("D5")
+Worksheets("6,7" & y).Range("N880").Copy Worksheets("Contact_Placement").Range("E5")
+Worksheets("6,7" & y).Range("O880").Copy Worksheets("Contact_Placement").Range("F5")
+Worksheets("6,7" & y).Range("P880").Copy Worksheets("Contact_Placement").Range("G5")
+Worksheets("6,7" & y).Range("Q880").Copy Worksheets("Contact_Placement").Range("H5")
+Worksheets("6,7" & y).Range("R880").Copy Worksheets("Contact_Placement").Range("I5")
+'Stair06
+Worksheets("7,8" & y).Range("K880").Copy Worksheets("Contact_Placement").Range("B4")
+Worksheets("7,8" & y).Range("L880").Copy Worksheets("Contact_Placement").Range("C4")
+Worksheets("7,8" & y).Range("M880").Copy Worksheets("Contact_Placement").Range("D4")
+Worksheets("7,8" & y).Range("N880").Copy Worksheets("Contact_Placement").Range("E4")
+Worksheets("7,8" & y).Range("O880").Copy Worksheets("Contact_Placement").Range("F4")
+Worksheets("7,8" & y).Range("P880").Copy Worksheets("Contact_Placement").Range("G4")
+Worksheets("7,8" & y).Range("Q880").Copy Worksheets("Contact_Placement").Range("H4")
+Worksheets("7,8" & y).Range("R880").Copy Worksheets("Contact_Placement").Range("I4")
+'Stair07
+Worksheets("8,9" & y).Range("K880").Copy Worksheets("Contact_Placement").Range("B3")
+Worksheets("8,9" & y).Range("L880").Copy Worksheets("Contact_Placement").Range("C3")
+Worksheets("8,9" & y).Range("M880").Copy Worksheets("Contact_Placement").Range("D3")
+Worksheets("8,9" & y).Range("N880").Copy Worksheets("Contact_Placement").Range("E3")
+Worksheets("8,9" & y).Range("O880").Copy Worksheets("Contact_Placement").Range("F3")
+Worksheets("8,9" & y).Range("P880").Copy Worksheets("Contact_Placement").Range("G3")
+Worksheets("8,9" & y).Range("Q880").Copy Worksheets("Contact_Placement").Range("H3")
+Worksheets("8,9" & y).Range("R880").Copy Worksheets("Contact_Placement").Range("I3")
+'Stair08
+Worksheets("9,10" & y).Range("K880").Copy Worksheets("Contact_Placement").Range("B2")
+Worksheets("9,10" & y).Range("L880").Copy Worksheets("Contact_Placement").Range("C2")
+Worksheets("9,10" & y).Range("M880").Copy Worksheets("Contact_Placement").Range("D2")
+Worksheets("9,10" & y).Range("N880").Copy Worksheets("Contact_Placement").Range("E2")
+Worksheets("9,10" & y).Range("O880").Copy Worksheets("Contact_Placement").Range("F2")
+Worksheets("9,10" & y).Range("P880").Copy Worksheets("Contact_Placement").Range("G2")
+Worksheets("9,10" & y).Range("Q880").Copy Worksheets("Contact_Placement").Range("H2")
+Worksheets("9,10" & y).Range("R880").Copy Worksheets("Contact_Placement").Range("I2")
+
+'Standard Deviation
+Range("M1").Value = "Standard Deviation"
+Range("M2").Value = "Stair08"
+Range("M3").Value = "Stair07"
+Range("M4").Value = "Stair06"
+Range("M5").Value = "Stair05"
+Range("M6").Value = "Stair04"
+Range("M7").Value = "Stair03"
+Range("M8").Value = "Stair02"
+Range("M9").Value = "Stair01"
+Range("M10").Value = "Stair00"
+
+
+Range("N1").Value = "Z1"
+Range("O1").Value = "Z2"
+Range("P1").Value = "Z3"
+Range("Q1").Value = "Z4"
+Range("R1").Value = "Z5"
+Range("S1").Value = "Z6"
+Range("T1").Value = "Z7"
+Range("U1").Value = "Z8"
+
+
+'Stair00
+Worksheets("B16Z_58ACI_1PB_BSCSGS").Range("K882").Copy Worksheets("Contact_Placement").Range("N10")
+Worksheets("B16Z_58ACI_1PB_BSCSGS").Range("L882").Copy Worksheets("Contact_Placement").Range("O10")
+Worksheets("B16Z_58ACI_1PB_BSCSGS").Range("M882").Copy Worksheets("Contact_Placement").Range("P10")
+Worksheets("B16Z_58ACI_1PB_BSCSGS").Range("N882").Copy Worksheets("Contact_Placement").Range("Q10")
+Worksheets("B16Z_58ACI_1PB_BSCSGS").Range("O882").Copy Worksheets("Contact_Placement").Range("R10")
+Worksheets("B16Z_58ACI_1PB_BSCSGS").Range("P882").Copy Worksheets("Contact_Placement").Range("S10")
+Worksheets("B16Z_58ACI_1PB_BSCSGS").Range("Q882").Copy Worksheets("Contact_Placement").Range("T10")
+Worksheets("B16Z_58ACI_1PB_BSCSGS").Range("R882").Copy Worksheets("Contact_Placement").Range("U10")
+'Stair01
+Worksheets("2,3").Range("K882").Copy Worksheets("Contact_Placement").Range("N9")
+Worksheets("2,3").Range("L882").Copy Worksheets("Contact_Placement").Range("O9")
+Worksheets("2,3").Range("M882").Copy Worksheets("Contact_Placement").Range("P9")
+Worksheets("2,3").Range("N882").Copy Worksheets("Contact_Placement").Range("Q9")
+Worksheets("2,3").Range("O882").Copy Worksheets("Contact_Placement").Range("R9")
+Worksheets("2,3").Range("P882").Copy Worksheets("Contact_Placement").Range("S9")
+Worksheets("2,3").Range("Q882").Copy Worksheets("Contact_Placement").Range("T9")
+Worksheets("2,3").Range("R882").Copy Worksheets("Contact_Placement").Range("U9")
+'Stair02
+Worksheets("3,4" & y).Range("K882").Copy Worksheets("Contact_Placement").Range("N8")
+Worksheets("3,4" & y).Range("L882").Copy Worksheets("Contact_Placement").Range("O8")
+Worksheets("3,4" & y).Range("M882").Copy Worksheets("Contact_Placement").Range("P8")
+Worksheets("3,4" & y).Range("N882").Copy Worksheets("Contact_Placement").Range("Q8")
+Worksheets("3,4" & y).Range("O882").Copy Worksheets("Contact_Placement").Range("R8")
+Worksheets("3,4" & y).Range("P882").Copy Worksheets("Contact_Placement").Range("S8")
+Worksheets("3,4" & y).Range("Q882").Copy Worksheets("Contact_Placement").Range("T8")
+Worksheets("3,4" & y).Range("R882").Copy Worksheets("Contact_Placement").Range("U8")
+'Stair03
+Worksheets("4,5" & y).Range("K882").Copy Worksheets("Contact_Placement").Range("N7")
+Worksheets("4,5" & y).Range("L882").Copy Worksheets("Contact_Placement").Range("O7")
+Worksheets("4,5" & y).Range("M882").Copy Worksheets("Contact_Placement").Range("P7")
+Worksheets("4,5" & y).Range("N882").Copy Worksheets("Contact_Placement").Range("Q7")
+Worksheets("4,5" & y).Range("O882").Copy Worksheets("Contact_Placement").Range("R7")
+Worksheets("4,5" & y).Range("P882").Copy Worksheets("Contact_Placement").Range("S7")
+Worksheets("4,5" & y).Range("Q882").Copy Worksheets("Contact_Placement").Range("T7")
+Worksheets("4,5" & y).Range("R882").Copy Worksheets("Contact_Placement").Range("U7")
+'Stair04
+Worksheets("5,6" & y).Range("K882").Copy Worksheets("Contact_Placement").Range("N6")
+Worksheets("5,6" & y).Range("L882").Copy Worksheets("Contact_Placement").Range("O6")
+Worksheets("5,6" & y).Range("M882").Copy Worksheets("Contact_Placement").Range("P6")
+Worksheets("5,6" & y).Range("N882").Copy Worksheets("Contact_Placement").Range("Q6")
+Worksheets("5,6" & y).Range("O882").Copy Worksheets("Contact_Placement").Range("R6")
+Worksheets("5,6" & y).Range("P882").Copy Worksheets("Contact_Placement").Range("S6")
+Worksheets("5,6" & y).Range("Q882").Copy Worksheets("Contact_Placement").Range("T6")
+Worksheets("5,6" & y).Range("R882").Copy Worksheets("Contact_Placement").Range("U6")
+'Stair05
+Worksheets("6,7" & y).Range("K882").Copy Worksheets("Contact_Placement").Range("N5")
+Worksheets("6,7" & y).Range("L882").Copy Worksheets("Contact_Placement").Range("O5")
+Worksheets("6,7" & y).Range("M882").Copy Worksheets("Contact_Placement").Range("P5")
+Worksheets("6,7" & y).Range("N882").Copy Worksheets("Contact_Placement").Range("Q5")
+Worksheets("6,7" & y).Range("O882").Copy Worksheets("Contact_Placement").Range("R5")
+Worksheets("6,7" & y).Range("P882").Copy Worksheets("Contact_Placement").Range("S5")
+Worksheets("6,7" & y).Range("Q882").Copy Worksheets("Contact_Placement").Range("T5")
+Worksheets("6,7" & y).Range("R882").Copy Worksheets("Contact_Placement").Range("U5")
+'Stair06
+Worksheets("7,8" & y).Range("K882").Copy Worksheets("Contact_Placement").Range("N4")
+Worksheets("7,8" & y).Range("L882").Copy Worksheets("Contact_Placement").Range("O4")
+Worksheets("7,8" & y).Range("M882").Copy Worksheets("Contact_Placement").Range("P4")
+Worksheets("7,8" & y).Range("N882").Copy Worksheets("Contact_Placement").Range("Q4")
+Worksheets("7,8" & y).Range("O882").Copy Worksheets("Contact_Placement").Range("R4")
+Worksheets("7,8" & y).Range("P882").Copy Worksheets("Contact_Placement").Range("S4")
+Worksheets("7,8" & y).Range("Q882").Copy Worksheets("Contact_Placement").Range("T4")
+Worksheets("7,8" & y).Range("R882").Copy Worksheets("Contact_Placement").Range("U4")
+'Stair07
+Worksheets("8,9" & y).Range("K882").Copy Worksheets("Contact_Placement").Range("N3")
+Worksheets("8,9" & y).Range("L882").Copy Worksheets("Contact_Placement").Range("O3")
+Worksheets("8,9" & y).Range("M882").Copy Worksheets("Contact_Placement").Range("P3")
+Worksheets("8,9" & y).Range("N882").Copy Worksheets("Contact_Placement").Range("Q3")
+Worksheets("8,9" & y).Range("O882").Copy Worksheets("Contact_Placement").Range("R3")
+Worksheets("8,9" & y).Range("P882").Copy Worksheets("Contact_Placement").Range("S3")
+Worksheets("8,9" & y).Range("Q882").Copy Worksheets("Contact_Placement").Range("T3")
+Worksheets("8,9" & y).Range("R882").Copy Worksheets("Contact_Placement").Range("U3")
+'Stair08
+Worksheets("9,10" & y).Range("K882").Copy Worksheets("Contact_Placement").Range("N2")
+Worksheets("9,10" & y).Range("L882").Copy Worksheets("Contact_Placement").Range("O2")
+Worksheets("9,10" & y).Range("M882").Copy Worksheets("Contact_Placement").Range("P2")
+Worksheets("9,10" & y).Range("N882").Copy Worksheets("Contact_Placement").Range("Q2")
+Worksheets("9,10" & y).Range("O882").Copy Worksheets("Contact_Placement").Range("R2")
+Worksheets("9,10" & y).Range("P882").Copy Worksheets("Contact_Placement").Range("S2")
+Worksheets("9,10" & y).Range("Q882").Copy Worksheets("Contact_Placement").Range("T2")
+Worksheets("9,10" & y).Range("R882").Copy Worksheets("Contact_Placement").Range("U2")
+
+
+
+
+'Zone 1 Normalization to 5000A
+Range("A18").Value = "Stair-Normalized"
+Range("A19").Value = "Stair08"
+Range("A20").Value = "Stair07"
+Range("A21").Value = "Stair06"
+Range("A22").Value = "Stair05"
+Range("A23").Value = "Stair04"
+Range("A24").Value = "Stair03"
+Range("A25").Value = "Stair02"
+Range("A26").Value = "Stair01"
+Range("A27").Value = "Stair00-Ref26"
+
+Range("B18").Value = "Z1"
+Range("C18").Value = "Z2"
+Range("D18").Value = "Z3"
+Range("E18").Value = "Z4"
+Range("F18").Value = "Z5"
+Range("G18").Value = "Z6"
+Range("H18").Value = "Z7"
+Range("I18").Value = "Z8"
+
+
+
+
+'Normalization Factor of Zone1 to 500nm
+Dim ef as Integer
+Dim eg as Integer
+Dim eh as Integer
+Dim ei as Integer
+
+
+for ef = 2 to 9
+Cells(27, ef).Value = cells(10,ef)
+next ef
+
+
+for eg = 19 to 26
+cells(eg, 2).Value = 5000
+next eg
+
+
+for eh = 3 to 9
+for ei = 26 to 19 step -1
+cells(ei, eh).Value = cells((ei-17), eh) + (5000 - cells((ei-17),2))
+next ei
+next eh
+
+
+
+'Stair Edge Calculation
+Range("A35").Value = "Stair-Edge"
+Range("A36").Value = "Stair08"
+Range("A37").Value = "Stair07"
+Range("A38").Value = "Stair06"
+Range("A39").Value = "Stair05"
+Range("A40").Value = "Stair04"
+Range("A41").Value = "Stair03"
+Range("A42").Value = "Stair02"
+Range("A43").Value = "Stair01"
+Range("A44").Value = "Stair00-Ref26"
+
+
+Range("B35").Value = "Z1"
+Range("C35").Value = "Z2"
+Range("D35").Value = "Z3"
+Range("E35").Value = "Z4"
+Range("F35").Value = "Z5"
+Range("G35").Value = "Z6"
+Range("H35").Value = "Z7"
+Range("I35").Value = "Z8"
+
+'Edge Calculations
+Dim bc As Integer
+Dim ab As Integer
+Dim de As Integer
+
+For bc = 2 To 9
+Cells(44, bc).Value = (Cells(27, bc))
+Next bc
+
+For ab = 43 To 36 Step -1
+For de = 2 To 9 Step 1
+Cells(ab, de).Value = Cells((ab + 1), de) + Cells((ab - 17), de)
+Next de
+Next ab
+
+
+
+'Mid-Stair Calculation
+Range("A52").Value = "Mid-Stair"
+Range("A53").Value = "Stair08"
+Range("A54").Value = "Stair07"
+Range("A55").Value = "Stair06"
+Range("A56").Value = "Stair05"
+Range("A57").Value = "Stair04"
+Range("A58").Value = "Stair03"
+Range("A59").Value = "Stair02"
+Range("A60").Value = "Stair01-Ref26"
+
+
+
+Range("B52").Value = "Z1"
+Range("C52").Value = "Z2"
+Range("D52").Value = "Z3"
+Range("E52").Value = "Z4"
+Range("F52").Value = "Z5"
+Range("G52").Value = "Z6"
+Range("H52").Value = "Z7"
+Range("I52").Value = "Z8"
+
+
+Dim gh As Integer
+Dim ij As Integer
+For gh = 60 To 53 Step -1
+For ij = 2 To 9 Step 1
+Cells(gh, ij).Value = (Cells((gh - 16), ij) + Cells((gh - 17), ij)) / 2
+Next ij
+Next gh
+
+
+
+'Reference-26L with 10nm WL Isolation 
+Range("A68").Value = "Shift_10nm WL Isolation"
+Range("A69").Value = "Stair08"
+Range("A70").Value = "Stair07"
+Range("A71").Value = "Stair06"
+Range("A72").Value = "Stair05"
+Range("A73").Value = "Stair04"
+Range("A74").Value = "Stair03"
+Range("A75").Value = "Stair02"
+Range("A76").Value = "Stair01"
+
+
+
+
+Range("B68").Value = "Z1-100A"
+Range("C68").Value = "Z2-100A"
+Range("D68").Value = "Z3-100A"
+Range("E68").Value = "Z4-100A"
+Range("F68").Value = "Z5-100A"
+Range("G68").Value = "Z6-100A"
+Range("H68").Value = "Z7-100A"
+Range("I68").Value = "Z8-100A"
+
+
+Dim kl As Integer
+For kl = 69 to 76
+For mn = 2 To 4
+Cells(kl, mn).Value = Cells((kl - 16), mn) - 100
+Next mn
+Next kl
+
+
+For kl = 69 to 76
+For mn = 5 To 8
+Cells(kl, mn).Value = Cells((kl - 16), mn) - 100
+Next mn
+Next kl
+
+
+For kl = 69 to 76
+Cells(kl, 9).Value = Cells((kl - 16), 9) - 100
+Next kl
+
+
+
+
+
+'Contact-location in Microns
+Range("A84").Value = "Contact (dum)"
+Range("A85").Value = "Stair08"
+Range("A86").Value = "Stair07"
+Range("A87").Value = "Stair06"
+Range("A88").Value = "Stair05"
+Range("A89").Value = "Stair04"
+Range("A90").Value = "Stair03"
+Range("A91").Value = "Stair02"
+Range("A92").Value = "Stair01"
+
+
+
+
+Range("B84").Value = "Z1"
+Range("C84").Value = "Z2"
+Range("D84").Value = "Z3"
+Range("E84").Value = "Z4"
+Range("F84").Value = "Z5"
+Range("G84").Value = "Z6"
+Range("H84").Value = "Z7"
+Range("I84").Value = "Z8"
+
+
+Dim op As Integer
+Dim qr As Integer
+
+For op = 92 To 85 Step -1
+For qr = 2 To 9 Step 1
+
+Cells(op, qr).Value = Cells((op - 16), qr) / 500
+
+Next qr
+Next op
+
+
+
+End Sub
+
+
+
